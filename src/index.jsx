@@ -1,12 +1,32 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, Link } from 'react-router'
+import Rebase from 're-base'
 
-const Content = React.createClass({
+var base = Rebase.createClass('https://dbtag.firebaseio.com')
+
+const PostList = React.createClass({
+  getInitialState () {
+    return {
+      posts: []
+    }
+  },
+  componentDidMount () {
+    base.bindToState('posts', {
+      context: this,
+      state: 'posts',
+      asArray: true
+    })
+  },
   render () {
     return (
       <div>
-        <h2>Content</h2>
+        <h2>Latest posts</h2>
+        <ul>
+          {this.state.posts.map((post, i) => (
+            <li key={i}>{post}</li>
+          ))}
+        </ul>
       </div>
     )
   }
@@ -14,6 +34,6 @@ const Content = React.createClass({
 
 ReactDOM.render((
   <Router>
-    <Route path="/" component={Content} />
+    <Route path="/" component={PostList} />
   </Router>
 ), document.getElementById('content'))
