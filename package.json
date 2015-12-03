@@ -1,7 +1,7 @@
 {
-  "name": "dbkaplun-static-boilerplate",
+  "name": "dbtag",
   "version": "1.0.0",
-  "description": "dbkaplun's static website boilerplate",
+  "description": "dbtag",
   "main": "index.html",
   "scripts": {
     "build": "gulp",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dbkaplun/dbkaplun-static-boilerplate.git"
+    "url": "git+https://github.com/dbkaplun/dbtag.git"
   },
   "author": "Dan Kaplun <dbkaplun@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dbkaplun/dbkaplun-static-boilerplate/issues"
+    "url": "https://github.com/dbkaplun/dbtag/issues"
   },
-  "homepage": "https://github.com/dbkaplun/dbkaplun-static-boilerplate#readme",
+  "homepage": "https://github.com/dbkaplun/dbtag#readme",
   "devDependencies": {
     "babel-preset-es2015": "6.1.18",
     "babel-preset-react": "6.1.18",
