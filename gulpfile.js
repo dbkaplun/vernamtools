@@ -19,7 +19,6 @@ var str = require('string-to-stream');
 var less = require('gulp-less');
 var postcss = require('gulp-postcss');
 var nano = require('cssnano');
-var uncss = require('gulp-uncss');
 
 // fonts
 var flatten = require('gulp-flatten');
@@ -61,7 +60,6 @@ gulp.task('build-css', function () {
     .pipe(sourcemaps.init())
       // Add transformation tasks to the pipeline here
       .pipe(less())
-      .pipe(uncss({html: [src+'index.html']}))
       .pipe(postcss([nano]))
       .on('error', gutil.log)
     .pipe(sourcemaps.write('.'))
