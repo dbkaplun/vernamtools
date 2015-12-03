@@ -32,7 +32,8 @@ var dist = 'dist/';
 
 var watching = false;
 var b = watchify(browserify(watchify.args))
-  .add(src+'index.js')
+  .transform('babelify', {presets: ['es2015', 'react']})
+  .add(src+'index.jsx')
   .add(str(isogram({id: 'UA-63592021-1'})))
   .on('log', gutil.log);
 
