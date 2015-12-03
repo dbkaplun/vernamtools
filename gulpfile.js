@@ -68,7 +68,7 @@ gulp.task('build-css', function () {
 });
 gulp.task('build-html', ['build-js', 'build-css', 'build-fonts'], function () {
   return gulp.src(src+'index.html')
-    .pipe(htmlmin({collapseWhitespace: true}))
+    .pipe(htmlmin({collapseWhitespace: true, removeComments: true}))
     .pipe(gulp.dest('.'));
 });
 gulp.task('build', ['build-html']);
