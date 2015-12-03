@@ -1,9 +1,9 @@
-import React from 'react'
-import Rebase from 're-base'
+import Firebase from 'firebase'
 
+import React from 'react'
 import ReactAuthService from '../authService.jsx'
 
-var base = Rebase.createClass('https://dbtag.firebaseio.com')
+var ref = new Firebase('https://dbtag.firebaseio.com')
 
 export default React.createClass({
   getInitialState () {
@@ -17,7 +17,7 @@ export default React.createClass({
   },
   componentDidMount () {
     this.auth = new ReactAuthService({
-      base: base,
+      ref: ref,
       context: this,
       state: 'authData'
     })
@@ -25,26 +25,18 @@ export default React.createClass({
   handleRegister (evt) {
     evt.preventDefault()
     var self = this
-    base.createUser(this.state.emailForm, function (err) {
+    ref.createUser(this.state.emailForm, function (err) {
       if (err) return self.auth.handleAuthError(err)
       self.handleLogin(evt)
     })
   },
   handleLogin (evt) {
     evt.preventDefault()
-    base.authWithPassword(this.state.emailForm, this.auth.handleAuth.bind(this.auth))
-  },
-  handleRemove (evt) {
-    evt.preventDefault()
-    var self = this
-    base.removeUser(this.state.emailForm, function (err) {
-      if (err) return self.auth.handleAuthError(err)
-      self.handleLogin(evt)
-    })
+    ref.authWithPassword(this.state.emailForm, this.auth.handleAuth.bind(this.auth))
   },
   handleLogout (evt) {
     evt.preventDefault()
-    base.unauth()
+    ref.unauth()
   },
   handleEmailFormChange (evt) {
     evt.preventDefault()

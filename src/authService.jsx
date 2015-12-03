@@ -2,11 +2,11 @@ export default class {
   constructor (opts) {
     this.opts = opts
     this.getAuth()
-    opts.base.onAuth(this.handleAuthData.bind(this))
-    // if (!this.authData) opts.base.authAnonymously(this.handleAuth.bind(this))
+    opts.ref.onAuth(this.handleAuthData.bind(this))
+    // if (!this.authData) opts.ref.authAnonymously(this.handleAuth.bind(this))
   }
   getAuth () {
-    this.handleAuthData(this.opts.base.getAuth())
+    this.handleAuthData(this.opts.ref.getAuth())
   }
   get authData () {
     return this.opts.context.state[this.opts.state];
@@ -33,6 +33,6 @@ export default class {
     this.handleAuthData(authData)
   }
   authWithOAuthRedirectHandler (provider) {
-    return this.opts.base.authWithOAuthRedirect(provider, this.handleAuth.bind(this))
+    return this.opts.ref.authWithOAuthRedirect(provider, this.handleAuth.bind(this))
   }
 }

@@ -1,2 +1,21 @@
 @import "node_modules/bootstrap/less/bootstrap.less";
 @icon-font-path: "fonts/";
+
+@import (less) "node_modules/react-tagsinput/react-tagsinput.css";
+
+.form-control.tag-container {
+  padding: 2px 12px;
+  height: auto;
+  .label {
+    display: inline-block;
+    margin-right: 5px;
+    a {
+      color: @label-color;
+      text-decoration: none;
+
+      &::before:extend(.react-tagsinput-tag a::before) {}
+    }
+    &.label-primary a::before { color: lighten(@brand-primary, 33%); }
+  }
+  input { margin: 0; }
+}
