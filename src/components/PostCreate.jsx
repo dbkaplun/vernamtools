@@ -17,8 +17,7 @@ export default React.createClass({
         title: '',
         tags: [],
         postedDate: Date.now()
-      },
-      titleEditable: true
+      }
     }
   },
   handlePostCreateFormChange (evt) {
@@ -27,15 +26,6 @@ export default React.createClass({
     var state = self.state
     var postForm = state.postForm
     postForm[evt.target.name] = evt.target.value
-    if (evt.target.name === 'url' && evt.target.value) {
-      state.titleEditable = true
-      $.get(`http://crossorigin.me/${evt.target.value}`).success(res => {
-        state = self.state
-        state.postForm.title = (res.toString().match(/<title.*?>(.*)<\/title[\s>]/im) || [])[1] || ''
-        state.titleEditable = false
-        self.setState(state)
-      })
-    }
     self.setState(state)
   },
   handlePostCreateFormSubmit (evt) {
@@ -64,11 +54,11 @@ export default React.createClass({
         </div>
         <div className="form-group">
           <label htmlFor="post-create-form-url">URL <small className="text-muted">(required)</small></label>
-          <input className="form-control" onChange={this.handlePostCreateFormChange} name="url" value={postForm.url} id="post-create-form-url" />
+          <input className="form-control" onChange={this.handlePostCreateFormChange} name="url" value={postForm.url} type="url" id="post-create-form-url" />
         </div>
         <div className="form-group">
           <label htmlFor="post-create-form-title">Title <small className="text-muted">(required)</small></label>
-          <input className="form-control" onChange={this.handlePostCreateFormChange} name="title" value={postForm.title} id="post-create-form-title" disabled={!state.titleEditable} />
+          <input className="form-control" onChange={this.handlePostCreateFormChange} name="title" value={postForm.title} id="post-create-form-title" />
         </div>
         <div className="form-group">
           <label htmlFor="post-create-form-tags">Tags <small className="text-muted">(at least 1 required&mdash;separated by <kbd>Enter</kbd>, <kbd>Tab</kbd>, or <kbd>Space</kbd>)</small></label>
