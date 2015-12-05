@@ -38,15 +38,15 @@ export default React.createClass({
               <div className="media-body">
                 <span className="pull-right">
                   {post.tags.map((tag, tagIndex) => (
-                    <span>
-                      <span className="label label-primary" key={tagIndex}>{tag}</span>
+                    <span key={tagIndex}>
+                      <span className="label label-primary">{tag}</span>
                       {' '}
                     </span>
                   ))}
                 </span>
                 <h3 className="media-heading">
                   <div><a href={post.url} target="_blank">{post.title}</a></div>
-                  <small><em title={post.postedDate.format('lll')}>{post.postedDate.fromNow()}</em> &bull; {post.url}</small>
+                  <small><span title={post.postedDate.format('lll')}><span className="glyphicon glyphicon-time" aria-hidden="true"></span> {post.postedDate.fromNow()}</span> &bull; <span><span className="glyphicon glyphicon-globe" aria-hidden="true"></span> {post.url}</span></small>
                 </h3>
               </div>
             </div>
