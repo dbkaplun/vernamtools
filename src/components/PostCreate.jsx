@@ -1,6 +1,5 @@
 import Firebase from 'firebase'
 import _ from 'lodash'
-import $ from 'jquery'; window.$ = $
 
 import React from 'react'
 import ReactFireMixin from 'reactfire'
@@ -14,7 +13,6 @@ export default React.createClass({
     return {
       postForm: {
         url: '',
-        title: '',
         tags: [],
         postedDate: Date.now()
       }
@@ -32,7 +30,10 @@ export default React.createClass({
     evt.preventDefault()
     var postForm = this.state.postForm
     postForm.postedDate = Date.now()
-    ref.child('posts').push(postForm)
+    var postRef = ref.child('posts').push(postForm, err => {
+      if (err) return alert(err.toString())
+      window.location = `#/post/${postRef.key()}`
+    })
   },
   handleTagsChange (tags) {
     var postForm = this.state.postForm
@@ -57,11 +58,7 @@ export default React.createClass({
           <input className="form-control" onChange={this.handlePostCreateFormChange} name="url" value={postForm.url} type="url" id="post-create-form-url" />
         </div>
         <div className="form-group">
-          <label htmlFor="post-create-form-title">Title <small className="text-muted">(required)</small></label>
-          <input className="form-control" onChange={this.handlePostCreateFormChange} name="title" value={postForm.title} id="post-create-form-title" />
-        </div>
-        <div className="form-group">
-          <label htmlFor="post-create-form-tags">Tags <small className="text-muted">(at least 1 required&mdash;separated by <kbd>Enter</kbd>, <kbd>Tab</kbd>, or <kbd>Space</kbd>)</small></label>
+          <label htmlFor="post-create-form-tags">Tags <small className="text-muted">(separated by <kbd>Enter</kbd>, <kbd>Tab</kbd>, or <kbd>Space</kbd>)</small></label>
           {/*<input className="form-control" onChange={this.handlePostCreateFormChange} name="tags" value={postForm.tags} id="post-create-form-tags" />*/}
           <TagsInput
             value={postForm.tags}
