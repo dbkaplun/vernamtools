@@ -1,3 +1,4 @@
+import url from 'url'
 import moment from 'moment'
 
 import React from 'react'
@@ -25,7 +26,7 @@ export default React.createClass({
                 <dt><span className="glyphicon glyphicon-time" aria-hidden="true"></span></dt>
                 <dd title={postedDate.format('lll')}>{postedDate.fromNow()}</dd>
                 <dt><span className="glyphicon glyphicon-globe" aria-hidden="true"></span></dt>
-                <dd>{post.url}</dd>
+                <dd>{url.parse(post.url).hostname}</dd>
               </dl>
             )
           }
