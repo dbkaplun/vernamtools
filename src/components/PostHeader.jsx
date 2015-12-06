@@ -1,8 +1,8 @@
-import url from 'url'
-import moment from 'moment'
-
 import React from 'react'
 import { Link } from 'react-router'
+
+import url from 'url'
+import moment from 'moment'
 
 export default React.createClass({
   render () {
@@ -15,12 +15,12 @@ export default React.createClass({
           {!post['.key']
             ? ""
             : (
-              <dl className="dl-horizontal pull-right text-muted">
+              <dl className="dl-horizontal dl-horizontal-right pull-right text-muted">
                 <dt><span className="glyphicon glyphicon-comment" aria-hidden="true"></span></dt>
                 <dd>{this.props.commentsText
                   ? "comments"
                   : (
-                    <Link to={`/post/${post['.key']}`}>comments</Link>
+                    <Link to={`/posts/${post['.key']}`}>comments</Link>
                   )
                 }</dd>
                 <dt><span className="glyphicon glyphicon-time" aria-hidden="true"></span></dt>

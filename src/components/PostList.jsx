@@ -1,12 +1,8 @@
-import Firebase from 'firebase'
-
 import React from 'react'
 import ReactFireMixin from 'reactfire'
 import { Link } from 'react-router'
 
 import PostHeader from './PostHeader.jsx'
-
-var ref = new Firebase('https://dbtag.firebaseio.com')
 
 export default React.createClass({
   mixins: [ReactFireMixin],
@@ -17,7 +13,7 @@ export default React.createClass({
     }
   },
   componentDidMount () {
-    this.bindAsArray(ref.child('posts')
+    this.bindAsArray(this.props.dbtag.fbRef.child('posts')
       .orderByChild('postedDate')
       .limitToLast(this.state.pageSize), 'posts')
   },

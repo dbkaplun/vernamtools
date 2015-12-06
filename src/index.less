@@ -5,6 +5,7 @@
 .dl-horizontal dt { width: auto; }
 
 @import (less) "node_modules/react-tagsinput/react-tagsinput.css";
+@import (less) "node_modules/simplemde/dist/simplemde.min.css";
 
 .form-control.tag-container {
   padding: 2px 12px;
@@ -21,4 +22,24 @@
     &.label-primary a::before { color: lighten(@brand-primary, 33%); }
   }
   input { margin: 0; }
+}
+
+.comment-list {
+  margin-top: @padding-large-vertical * 2;
+  border-left: 3px solid @gray-lighter;
+  padding-left: @padding-large-horizontal;
+  .comment {
+    &.comment-folded {
+      opacity: .5;
+    }
+    &:focus {
+      background: @gray-lighter;
+      outline: none;
+    }
+  }
+}
+
+.dl-horizontal-right {
+  dt { float: right; clear: right; text-align: left; }
+  dd { margin: 0 @dl-horizontal-offset 0 0; text-align: right; }
 }

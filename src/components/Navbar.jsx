@@ -1,9 +1,4 @@
-import Firebase from 'firebase'
-
 import React from 'react'
-import ReactAuthService from '../authService.jsx'
-
-var ref = new Firebase('https://dbtag.firebaseio.com')
 
 export default React.createClass({
   getInitialState () {
@@ -11,47 +6,62 @@ export default React.createClass({
       emailForm: {
         email: '',
         password: ''
-      },
-      authData: null
+      }
     }
-  },
-  componentDidMount () {
-    this.auth = new ReactAuthService({
-      ref: ref,
-      context: this,
-      state: 'authData'
-    })
   },
   handleRegister (evt) {
     evt.preventDefault()
     var self = this
-    ref.createUser(this.state.emailForm, function (err) {
-      if (err) return self.auth.handleAuthError(err)
-      self.handleLogin(evt)
-    })
+    var dbtag = self.props.dbtag
+
+    dbtag.fbRef.createUserAsync(this.state.emailForm)
+      .then(this.authWithEmailForm)
+      .catch(err => {
+        switch (err.code) {
+          case 'EMAIL_TAKEN':
+          case 'INVALID_EMAIL':
+            dbtag.alertFromError(err)
+            break
+          default:
+            console.error(err)
+        }
+      })
+      .done()
+  },
+  authWithEmailForm () {
+    return this.props.dbtag.authWithPassword(this.state.emailForm)
   },
   handleLogin (evt) {
     evt.preventDefault()
-    ref.authWithPassword(this.state.emailForm, this.auth.handleAuth.bind(this.auth))
+    this.authWithEmailForm()
+      .catch(err => { console.error(err) })
+      .done()
   },
   handleLogout (evt) {
     evt.preventDefault()
-    ref.unauth()
+    this.props.dbtag.fbRef.unauth()
+    this.render()
   },
   handleEmailFormChange (evt) {
     evt.preventDefault()
-    this.state.emailForm[evt.target.name] = evt.target.value
-    this.setState({emailForm: this.state.emailForm})
+    var emailForm = this.state.emailForm
+    emailForm[evt.target.name] = evt.target.value
+    this.setState({emailForm})
   },
   oAuthHandler (provider) {
     throw new Error("not implemented")
     var self = this
-    return function (evt) {
+    return evt => {
       evt.preventDefault()
-      self.auth.authWithOAuthRedirectHandler(provider)
+      self.props.dbtag.authWithOAuthRedirectHandler(provider)
+        .catch(err => { console.error(err) })
+        .done()
     }
   },
   render () {
+    var user = this.props.dbtag.state.user
+    var loggedIn = user && !user.anonymous
+    var displayName = loggedIn && ((user[user.provider] || {}).email || user.uid) || "anonymous"
     return (
       <nav className="navbar navbar-default">
         <div className="container">
@@ -67,7 +77,7 @@ export default React.createClass({
 
           <div className="navbar-collapse" id="navbar-collapse">
             <form onSubmit={this.handleLogin} className="navbar-form navbar-right" role="search">
-              {this.state.authData
+              {loggedIn
                 ? (
                     <button onClick={this.handleLogout} className="btn btn-default">Logout</button>
                   )
@@ -88,7 +98,7 @@ export default React.createClass({
                   )
               }
             </form>
-            <p className="navbar-text navbar-right">Browsing as {this.state.authData ? this.state.authData[this.state.authData.provider].email : 'anonymous'}</p>
+            <p className="navbar-text navbar-right">Browsing as {displayName}</p>
           </div>{/*.navbar-collapse*/}
         </div>{/*.container*/}
       </nav>

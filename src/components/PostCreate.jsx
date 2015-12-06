@@ -1,12 +1,9 @@
-import Firebase from 'firebase'
-import _ from 'lodash'
-
 import React from 'react'
 import ReactFireMixin from 'reactfire'
 import { Link } from 'react-router'
 import TagsInput from 'react-tagsinput'
 
-var ref = new Firebase('https://dbtag.firebaseio.com')
+import _ from 'lodash'
 
 export default React.createClass({
   getInitialState () {
@@ -30,9 +27,9 @@ export default React.createClass({
     evt.preventDefault()
     var postForm = this.state.postForm
     postForm.postedDate = Date.now()
-    var postRef = ref.child('posts').push(postForm, err => {
+    var postRef = this.props.dbtag.fbRef.child('posts').push(postForm, err => {
       if (err) return alert(err.toString())
-      window.location = `#/post/${postRef.key()}`
+      window.location = `#/posts/${postRef.key()}`
     })
   },
   handleTagsChange (tags) {

@@ -39,18 +39,21 @@
     "isogram": "^0.6.0",
     "jquery": "2.1.4",
     "lodash": "3.10.1",
+    "marked": "0.3.5",
     "moment": "2.10.6",
     "react": "0.14.3",
     "react-dom": "0.14.3",
     "react-router": "1.0.0",
     "react-tagsinput": "3.0.3",
     "reactfire": "0.5.1",
+    "simplemde": "1.9.0",
     "string-to-stream": "^1.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.6.0"
   },
   "peerDependencies": {
+    "browserify-shim": "*",
     "history": "*"
   }
 }
