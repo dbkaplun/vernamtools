@@ -24,12 +24,12 @@ export default React.createClass({
           <h2>
             Latest posts
             <span className="pull-right">
-              <Link to="/post" className="btn btn-danger">Submit new post &raquo;</Link>
+              <Link to="/posts/create" className="btn btn-danger">Submit new post &raquo;</Link>
             </span>
           </h2>
         </div>
         {this.state.posts.map((post, postIndex) => (
-          <PostHeader post={post} key={postIndex} />
+          <PostHeader post={post} dbtag={this.props.dbtag} key={postIndex} />
         ))}
       </div>
     )

@@ -40,7 +40,7 @@ export default React.createClass({
           <li><Link to="/">Latest posts</Link></li>
           <li className="active"><a href={window.location}>{post.title || post.url}</a></li>
         </ol>
-        <PostHeader post={post} commentsText={true} />
+        <PostHeader post={post} commentsText={true} dbtag={dbtag} />
         {post
           ? (
               <div>
