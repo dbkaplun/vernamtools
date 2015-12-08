@@ -15,7 +15,7 @@ export default React.createClass({
     var comment = self.state.comment
     var uid = (dbtag.state.user || {}).uid
     if (!uid) {
-      dbtag.alertFromError(new Error("Please login before posting a comment"))
+      dbtag.alertFromError(new Error("Please login before posting a comment."))
       return
     }
     comment.uid = uid

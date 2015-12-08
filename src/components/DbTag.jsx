@@ -36,8 +36,8 @@ export default React.createClass({
   alertFromError (err) {
     var alerts = this.state.alerts
     var alert = {
-      className: 'alert-warning',
-      children: (
+      className: err.className || 'alert-warning',
+      children: err.contents || (
         <span>{err.message}</span>
       ),
       err: err

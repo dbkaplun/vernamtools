@@ -16,16 +16,7 @@ export default React.createClass({
 
     dbtag.fbRef.createUserAsync(this.state.emailForm)
       .then(this.authWithEmailForm)
-      .catch(err => {
-        switch (err.code) {
-          case 'EMAIL_TAKEN':
-          case 'INVALID_EMAIL':
-            dbtag.alertFromError(err)
-            break
-          default:
-            console.error(err)
-        }
-      })
+      .catch(dbtag.alertFromError)
       .done()
   },
   authWithEmailForm () {

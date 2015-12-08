@@ -36,9 +36,9 @@ export default React.createClass({
   toggleTag (tag, val) {
     var self = this
     return new Promise((resolve, reject) => {
-      if (self.state.invalidTags[tag]) return reject(new Error("invalid tag"))
+      if (self.state.invalidTags[tag]) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
       var uid = (self.getUser() || {}).uid
-      if (!uid) return reject(new Error("please login before tagging"))
+      if (!uid) return reject(new Error("Please login before tagging."))
       self.fbRef.child(encodeURIComponent(tag)).transaction(users => {
         users = users || {}
         if (typeof val === 'undefined') val = !users[uid]
@@ -47,7 +47,7 @@ export default React.createClass({
         return users
       }, function (err, committed, snapshot) {
         if (err) return reject(err)
-        else if (!committed) return reject(new Error("something went wrong, try again!"))
+        else if (!committed) return reject(new Error("Something went wrong, try again!"))
         resolve(snapshot)
       })
     })
