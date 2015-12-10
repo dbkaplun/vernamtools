@@ -50,9 +50,10 @@ export default React.createClass({
     }
   },
   render () {
-    var user = this.props.dbtag.state.user
-    var loggedIn = user && !user.anonymous
-    var displayName = loggedIn && ((user[user.provider] || {}).email || user.uid) || "anonymous"
+    var dbtag = this.props.dbtag
+    var user = dbtag.state.user
+    var loggedIn = dbtag.isLoggedIn()
+    var displayName = loggedIn ? ((user[user.provider] || {}).email || user.uid) : "anonymous"
     return (
       <nav className="navbar navbar-default">
         <div className="container">

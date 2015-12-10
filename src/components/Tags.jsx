@@ -27,8 +27,8 @@ export default React.createClass({
     }, {}))
     return true
   },
-  getUser () {
-    return this.props.dbtag.state.user
+  getUid () {
+    return (this.props.dbtag.state.user || {}).uid
   },
   usersTagged (tag) {
     return _.pick(this.state.tags[encodeURIComponent(tag)], Boolean)
@@ -37,7 +37,7 @@ export default React.createClass({
     var self = this
     return new Promise((resolve, reject) => {
       if (self.state.invalidTags[tag]) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
-      var uid = (self.getUser() || {}).uid
+      var uid = self.getUid()
       if (!uid) return reject(new Error("Please login before tagging."))
       self.fbRef.child(encodeURIComponent(tag)).transaction(users => {
         users = users || {}
@@ -83,7 +83,7 @@ export default React.createClass({
     var self = this
     var state = self.state
     var newTagFormVisible = state.newTagFormVisible
-    var uid = (self.getUser() || {}).uid
+    var uid = self.getUid()
     return (
       <span className="tags">
         <span>
@@ -105,7 +105,7 @@ export default React.createClass({
             )
           })}
         </span>
-        <a onClick={self.setNewTagFormVisibility.bind(self, true)} className={newTagFormVisible ? 'hide' : ''}>add new tag</a>
+        <a onClick={self.setNewTagFormVisibility.bind(self, true)} className={newTagFormVisible || !uid ? 'hide' : ''}>add new tag</a>
         <form onSubmit={self.submitNewTagForm} className={newTagFormVisible ? '' : 'hide'}>
           <input
             value={state.newTag}

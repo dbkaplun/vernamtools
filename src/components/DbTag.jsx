@@ -52,6 +52,10 @@ export default React.createClass({
     this.setState({alerts})
   },
 
+  isLoggedIn () {
+    var user = this.state.user
+    return !!user && !user.anonymous
+  },
   handleAuth (user) {
     var self = this
     return Promise.resolve(user)
