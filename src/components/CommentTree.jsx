@@ -43,7 +43,7 @@ var CommentTree = React.createClass({
     return (
       <ul className={`comment-list media-list ${this.props.className}`}>
         {state.comments.map((comment, commentIndex) => {
-          var postedDate = moment(comment.postedDate)
+          var createdDate = moment(comment.createdDate)
           var path = `comments/${comment['.key']}`
           return (
             <li className="media" key={commentIndex}>
@@ -52,7 +52,7 @@ var CommentTree = React.createClass({
                   <small><a onClick={self.toggleCommentPropHandler(comment, '_folded')}>[{comment._folded ? '+' : '-'}]</a></small>
                   {' '}
                   <Link to={`users/${comment.uid}`}>{comment.uid}</Link>
-                  <small title={postedDate.format('lll')}>, {postedDate.fromNow()}</small>
+                  <small title={createdDate.format('lll')}>, {createdDate.fromNow()}</small>
                 </h5>
                 <div className={comment._folded ? 'hide' : ''}>
                   <textarea value={comment.raw} readOnly className={`comment-raw form-control ${comment._viewSource ? '' : 'hide'}`} />

@@ -11,7 +11,7 @@ export default React.createClass({
       postForm: {
         url: '',
         tags: [],
-        postedDate: Date.now()
+        createdDate: Date.now()
       }
     }
   },
@@ -26,7 +26,7 @@ export default React.createClass({
   handlePostCreateFormSubmit (evt) {
     evt.preventDefault()
     var postForm = this.state.postForm
-    postForm.postedDate = Date.now()
+    postForm.createdDate = Date.now()
     var postRef = this.props.dbtag.fbRef.child('posts').push(postForm, err => {
       if (err) return alert(err.toString())
       window.location = `#/posts/${postRef.key()}`

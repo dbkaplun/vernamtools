@@ -9,6 +9,8 @@ import PostList from './PostList.jsx'
 import PostCreate from './PostCreate.jsx'
 import PostDetail from './PostDetail.jsx'
 
+import config from '../../config'
+
 export default React.createClass({
   getInitialState () {
     return {
@@ -17,7 +19,7 @@ export default React.createClass({
     }
   },
   componentWillMount () {
-    this.fbRef = Promise.promisifyAll(new Firebase('https://dbtag.firebaseio.com'))
+    this.fbRef = config.fbRef
   },
   componentDidMount () {
     var self = this

@@ -14,7 +14,7 @@ export default React.createClass({
   },
   componentDidMount () {
     this.bindAsArray(this.props.dbtag.fbRef.child('posts')
-      .orderByChild('postedDate')
+      .orderByChild('createdDate')
       .limitToLast(this.state.pageSize), 'posts')
   },
   render () {

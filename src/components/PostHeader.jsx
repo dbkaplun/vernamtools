@@ -16,34 +16,40 @@ export default React.createClass({
     var props = this.props
     var post = props.post || {}
     var path = this.getPath()
-    var postedDate = moment(post.postedDate)
+    var createdDate = moment(post.createdDate)
     return (
       <div className="media">
         <div className="media-body">
-          {!path
-            ? ""
-            : (
-              <dl className="dl-horizontal dl-horizontal-right pull-right text-muted">
-                <dt><span className="glyphicon glyphicon-tag" aria-hidden="true"></span></dt>
-                <dd><Tags forPath={path} dbtag={props.dbtag} /></dd>
-                <dt><span className="glyphicon glyphicon-comment" aria-hidden="true"></span></dt>
-                <dd>{props.commentsText
-                  ? "comments"
-                  : (
-                    <Link to={path}>comments</Link>
-                  )
-                }</dd>
-                <dt><span className="glyphicon glyphicon-time" aria-hidden="true"></span></dt>
-                <dd title={postedDate.format('lll')}>{postedDate.fromNow()}</dd>
-                <dt><span className="glyphicon glyphicon-globe" aria-hidden="true"></span></dt>
-                <dd>{url.parse(post.url || '').hostname}</dd>
-              </dl>
-            )
-          }
-          <h2 className="media-heading">
-            <a href={post.url} target="_blank">{post.title}</a>
-            <p>{post.description}</p>
-          </h2>
+          <div className="row">
+            <div className="col-sm-3">
+              {!path
+                ? ""
+                : (
+                  <dl className="dl-horizontal dl-horizontal-right text-muted">
+                    <dt><span className="glyphicon glyphicon-tag" aria-hidden="true"></span></dt>
+                    <dd><Tags forPath={path} dbtag={props.dbtag} /></dd>
+                    <dt><span className="glyphicon glyphicon-comment" aria-hidden="true"></span></dt>
+                    <dd>{props.commentsText
+                      ? "comments"
+                      : (
+                        <Link to={path}>comments</Link>
+                      )
+                    }</dd>
+                    <dt><span className="glyphicon glyphicon-time" aria-hidden="true"></span></dt>
+                    <dd title={createdDate.format('lll')}>{createdDate.fromNow()}</dd>
+                    <dt><span className="glyphicon glyphicon-globe" aria-hidden="true"></span></dt>
+                    <dd>{url.parse(post.url || '').hostname}</dd>
+                  </dl>
+                )
+              }
+            </div>
+            <div className="col-sm-9">
+              <h2 className="media-heading">
+                <a href={post.url} target="_blank">{post.title}</a>
+              </h2>
+              <p>{post.description}</p>
+            </div>
+          </div>
         </div>
       </div>
     )

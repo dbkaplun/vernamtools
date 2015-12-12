@@ -26,6 +26,9 @@ var flatten = require('gulp-flatten');
 // html
 var htmlmin = require('gulp-htmlmin');
 
+var PostMonitor = require('./bin/monitorPosts');
+var config = require('./config');
+
 var src = 'src/';
 var dist = 'dist/';
 
@@ -77,6 +80,10 @@ gulp.task('watch', ['before-watch', 'build'], function () {
   b.on('update', bundle);
   gulp.watch('**/*.less', ['build-css']);
   gulp.watch('**/*.html', ['build-html']);
+});
+
+gulp.task('monitor-posts', function () {
+  new PostMonitor(config);
 });
 
 gulp.task('default', ['build']);
