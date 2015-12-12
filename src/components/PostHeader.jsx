@@ -21,7 +21,7 @@ export default React.createClass({
       <div className="media">
         <div className="media-body">
           <div className="row">
-            <div className="col-sm-3">
+            <div className="col-xs-3">
               {!path
                 ? ""
                 : (
@@ -43,7 +43,7 @@ export default React.createClass({
                 )
               }
             </div>
-            <div className="col-sm-9">
+            <div className="col-xs-9">
               <h2 className="media-heading">
                 <a href={post.url} target="_blank">{post.title}</a>
               </h2>
