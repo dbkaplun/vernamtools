@@ -86,4 +86,5 @@ gulp.task('monitor-posts', () => {
   new PostMonitor(config)
 })
 
+gulp.task('dev', ['watch', 'monitor-posts'])
 gulp.task('default', ['build'])
