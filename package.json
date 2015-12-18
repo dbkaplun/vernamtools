@@ -58,6 +58,6 @@
   },
   "peerDependencies": {
     "browserify-shim": "*",
-    "history": "*"
+    "history": "1.13.1"
   }
 }
