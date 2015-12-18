@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 
 export default React.createClass({
   getInitialState () {
@@ -15,18 +16,15 @@ export default React.createClass({
     var dbtag = self.props.dbtag
 
     dbtag.fbRef.createUserAsync(this.state.emailForm)
-      .then(this.authWithEmailForm)
-      .catch(dbtag.alertFromError)
+      .then(this.getUserWithEmailForm)
       .done()
   },
-  authWithEmailForm () {
-    return this.props.dbtag.authWithPassword(this.state.emailForm)
+  getUserWithEmailForm () {
+    return this.props.dbtag.u.getUserWithPassword(this.state.emailForm)
   },
   handleLogin (evt) {
     evt.preventDefault()
-    this.authWithEmailForm()
-      .catch(err => { console.error(err) })
-      .done()
+    this.getUserWithEmailForm().done()
   },
   handleLogout (evt) {
     evt.preventDefault()
@@ -44,16 +42,13 @@ export default React.createClass({
     var self = this
     return evt => {
       evt.preventDefault()
-      self.props.dbtag.authWithOAuthRedirectHandler(provider)
-        .catch(err => { console.error(err) })
-        .done()
+      self.props.dbtag.u.getUserWithOAuthRedirectHandler(provider).done()
     }
   },
   render () {
-    var dbtag = this.props.dbtag
-    var user = dbtag.state.user
-    var loggedIn = dbtag.isLoggedIn()
-    var displayName = loggedIn ? ((user[user.provider] || {}).email || user.uid) : "anonymous"
+    var u = this.props.dbtag.u
+    var user = u.user || {}
+    var userParam = user.nick || user['.key']
     return (
       <nav className="navbar navbar-default">
         <div className="container">
@@ -68,13 +63,28 @@ export default React.createClass({
           </div>
 
           <div className="navbar-collapse" id="navbar-collapse">
-            <form onSubmit={this.handleLogin} className="navbar-form navbar-right" role="search">
-              {loggedIn
-                ? (
-                    <button onClick={this.handleLogout} className="btn btn-default">Logout</button>
-                  )
-                : (
-                    <div>
+            {u.isLoggedIn()
+              ? (
+                  <div className="navbar-right">
+                    <span className="navbar-text">Browsing as</span>
+                    <div className="btn-group btn-sm">
+                      <Link to={`/user/${userParam}`} className="btn btn-danger">{userParam}</Link>
+                      <button type="button" className="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span className="caret"></span>
+                        <span className="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul className="dropdown-menu">
+                        <li><Link to="/settings" className="btn btn-danger">Settings</Link></li>
+                        <li role="separator" className="divider"></li>
+                        <li><a onClick={this.handleLogout}>Logout</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                )
+              : (
+                  <div>
+                    <p className="navbar-text navbar-right">Browsing as anonymous</p>
+                    <form onSubmit={this.handleLogin} className="navbar-form navbar-right" role="search">
                       <div className="form-group">
                         <input className="form-control" onChange={this.handleEmailFormChange} name="email" value={this.state.emailForm.email} placeholder="Email" />
                       </div>
@@ -86,11 +96,10 @@ export default React.createClass({
                       <button className="btn btn-success">Login</button>
                       {' '}
                       <button onClick={this.handleRegister} className="btn btn-danger">Register</button>
-                    </div>
-                  )
-              }
-            </form>
-            <p className="navbar-text navbar-right">Browsing as {displayName}</p>
+                    </form>
+                  </div>
+                )
+            }
           </div>{/*.navbar-collapse*/}
         </div>{/*.container*/}
       </nav>

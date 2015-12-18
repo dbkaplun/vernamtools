@@ -51,7 +51,7 @@ var CommentTree = React.createClass({
                 <h5 className="media-heading">
                   <small><a onClick={self.toggleCommentPropHandler(comment, '_folded')}>[{comment._folded ? '+' : '-'}]</a></small>
                   {' '}
-                  <Link to={`users/${comment.uid}`}>{comment.uid}</Link>
+                  <Link to={`users/${comment.userKey}`}>{comment.userKey}</Link>
                   <small title={createdDate.format('lll')}>, {createdDate.fromNow()}</small>
                 </h5>
                 <div className={comment._folded ? 'hide' : ''}>

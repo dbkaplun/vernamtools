@@ -11,7 +11,7 @@ try {
 
 var config = _.merge({
   fbUrl: 'https://dbtag.firebaseio.com',
-  monitorPosts: {
+  postMonitor: {
     olderThan: moment.duration(5, 'minutes')
   }
 }, local)

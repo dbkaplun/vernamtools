@@ -1,7 +1,6 @@
 import React from 'react'
 import { Router, Route } from 'react-router'
 
-import Firebase from 'firebase'
 import Promise from 'bluebird'
 
 import Navbar from './Navbar.jsx'
@@ -10,6 +9,7 @@ import PostCreate from './PostCreate.jsx'
 import PostDetail from './PostDetail.jsx'
 
 import config from '../../config'
+import UserService from '../../util/UserService'
 
 export default React.createClass({
   getInitialState () {
@@ -19,19 +19,13 @@ export default React.createClass({
     }
   },
   componentWillMount () {
-    this.fbRef = config.fbRef
-  },
-  componentDidMount () {
     var self = this
-    self.fbRef.onAuth(user => {
-      self.handleAuth(user)
-        .catch(err => { console.error(err) })
-        .done()
-    })
-    self.updateAuth().then(user => {
-    // if (!user) return self.self.handleAuth(self.fbRef.authAnonymouslyAsync()) // FIXME: overrides logged in user
-    })
-      .catch(err => { console.error(err) })
+    self.fbRef = config.fbRef
+    self.u = UserService.instance
+    self.u.on('user', user => { self.forceUpdate() })
+    self.u.on('error', err => { self.alertFromError(err) })
+    self.u.updateUser()
+      .then(user => user || self.u.getUserAnonymously())
       .done()
   },
 
@@ -52,33 +46,6 @@ export default React.createClass({
     var alerts = this.state.alerts
     var closedAlert = alerts.splice(alertIndex, 1)[0]
     this.setState({alerts})
-  },
-
-  isLoggedIn () {
-    var user = this.state.user
-    return !!user && !user.anonymous
-  },
-  handleAuth (user) {
-    var self = this
-    return Promise.resolve(user)
-      .catch(err => {
-        self.alertFromError(err)
-        throw err
-      })
-      .then(user => {
-        console.log('user', user)
-        self.setState({user})
-        return user
-      })
-  },
-  updateAuth () {
-    return this.handleAuth(this.fbRef.getAuth())
-  },
-  authWithOAuthRedirect (provider) {
-    return this.handleAuth(this.fbRef.authWithOAuthRedirectAsync(provider))
-  },
-  authWithPassword (creds) {
-    return this.handleAuth(this.fbRef.authWithPasswordAsync(creds))
   },
 
   createElement (Component, props) {
@@ -107,6 +74,7 @@ export default React.createClass({
             <Route path="/" component={PostList} />
             <Route path="/posts/create" component={PostCreate} />
             <Route path="/posts/:postKey" component={PostDetail} />
+            <Route path="/users/:userKey" component={null} />
           </Router>
         </main>
       </div>

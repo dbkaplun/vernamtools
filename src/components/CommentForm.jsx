@@ -12,13 +12,12 @@ export default React.createClass({
     evt.preventDefault()
     var self = this
     var dbtag = self.props.dbtag
-    var comment = self.state.comment
-    var uid = (dbtag.state.user || {}).uid
-    if (!uid) {
+    if (!dbtag.u.isLoggedIn()) {
       dbtag.alertFromError(new Error("Please login before posting a comment."))
       return
     }
-    comment.uid = uid
+    var comment = self.state.comment
+    comment.userKey = dbtag.u.user['.key']
     return dbtag.fbRef.child(`comments/${encodeURIComponent(self.props.forPath)}`).push(comment, err => {
       if (err) {
         dbtag.alertFromError(err)

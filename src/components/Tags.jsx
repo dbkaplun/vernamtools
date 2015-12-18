@@ -27,9 +27,6 @@ export default React.createClass({
     }, {}))
     return true
   },
-  getUid () {
-    return (this.props.dbtag.state.user || {}).uid
-  },
   usersTagged (tag) {
     return _.pick(this.state.tags[encodeURIComponent(tag)], Boolean)
   },
@@ -37,13 +34,14 @@ export default React.createClass({
     var self = this
     return new Promise((resolve, reject) => {
       if (self.state.invalidTags[tag]) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
-      var uid = self.getUid()
-      if (!uid) return reject(new Error("Please login before tagging."))
+      var u = self.props.dbtag.u
+      if (!u.isLoggedIn()) return reject(new Error("Please login before tagging."))
+      var userKey = u.user['.key']
       self.fbRef.child(encodeURIComponent(tag)).transaction(users => {
         users = users || {}
-        if (typeof val === 'undefined') val = !users[uid]
-        if (val) users[uid] = Date.now()
-        else delete users[uid]
+        if (typeof val === 'undefined') val = !users[userKey]
+        if (val) users[userKey] = Date.now()
+        else delete users[userKey]
         return users
       }, function (err, committed, snapshot) {
         if (err) return reject(err)
@@ -83,7 +81,8 @@ export default React.createClass({
     var self = this
     var state = self.state
     var newTagFormVisible = state.newTagFormVisible
-    var uid = self.getUid()
+    var u = self.props.dbtag.u
+    var loggedIn = u.isLoggedIn()
     return (
       <span className="tags">
         <span>
@@ -96,7 +95,7 @@ export default React.createClass({
               <span key={reactKey}>
                 <a
                   onClick={self.toggleTagHandler.bind(self, tag)}
-                  className={`tag label label-${count ? users[uid] ? 'danger' : 'primary' : 'default'}`}>
+                  className={`tag label label-${count ? loggedIn && users[u.user['.key']] ? 'danger' : 'primary' : 'default'}`}>
                   {tag}
                   <small className={`muted ${count > 1 ? '' : 'hide'}`}> x {count}</small>
                 </a>
@@ -105,7 +104,7 @@ export default React.createClass({
             )
           })}
         </span>
-        <a onClick={self.setNewTagFormVisibility.bind(self, true)} className={newTagFormVisible || !uid ? 'hide' : ''}>add new tag</a>
+        <a onClick={self.setNewTagFormVisibility.bind(self, true)} className={loggedIn && !newTagFormVisible ? '' : 'hide'}>add new tag</a>
         <form onSubmit={self.submitNewTagForm} className={newTagFormVisible ? '' : 'hide'}>
           <input
             value={state.newTag}

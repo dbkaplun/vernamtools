@@ -26,7 +26,7 @@ var flatten = require('gulp-flatten')
 // html
 var htmlmin = require('gulp-htmlmin')
 
-var PostMonitor = require('./bin/monitorPosts')
+var PostMonitor = require('./bin/PostMonitor')
 var config = require('./config')
 
 var src = 'src/'
@@ -83,7 +83,7 @@ gulp.task('watch', ['before-watch', 'build'], () => {
 })
 
 gulp.task('monitor-posts', () => {
-  new PostMonitor(config)
+  new PostMonitor(config).watch()
 })
 
 gulp.task('dev', ['watch', 'monitor-posts'])
