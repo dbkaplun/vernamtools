@@ -7,6 +7,7 @@ import Firebase from 'firebase'
 import _ from 'lodash'
 
 import contextTypes from './contextTypes'
+import validateFirebaseKey from '../../validateFirebaseKey'
 
 export default React.createClass({
   mixins: [ReactFireMixin],
@@ -54,7 +55,7 @@ export default React.createClass({
         var oldNick = (u.user || {}).nick
         return nickRef.setAsync(userFormKey)
           .then(() => { if (oldNick && oldNick !== user.nick) return Promise.promisifyAll(context.fbRef.child(`nicks/${oldNick}`)).remove() })
-          .then(() => self.userRef.updateAsync(_.omit(user, '.key', '.value')))
+          .then(() => self.userRef.updateAsync(_.pick(user, (val, key) => validateFirebaseKey(key))))
           .then(() => u.updateUser())
       })
       .catch(context.app.alertFromError)

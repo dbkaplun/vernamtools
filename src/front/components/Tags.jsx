@@ -6,6 +6,7 @@ import _ from 'lodash'
 import Promise from 'bluebird'
 
 import contextTypes from './contextTypes'
+import validateFirebaseKey from '../../validateFirebaseKey'
 
 export default React.createClass({
   mixins: [ReactFireMixin],
@@ -15,7 +16,6 @@ export default React.createClass({
       tags: {},
       newTag: '',
       newTagFormVisible: false,
-      invalidTags: {'.key': true, '.val': true},
       alwaysShowTags: _(['+1', 'lol', '-1']).object().mapValues(_.constant(true)).value()
     }
   },
@@ -36,7 +36,7 @@ export default React.createClass({
   toggleTag (tag, val) {
     var self = this
     return new Promise((resolve, reject) => {
-      if (self.state.invalidTags[tag]) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
+      if (!validateFirebaseKey(tag)) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
       var u = self.context.u
       if (!u.isLoggedIn()) return reject(new Error("Please login before tagging."))
       var userKey = u.user['.key']
@@ -91,7 +91,7 @@ export default React.createClass({
             var reactKey = tag
             tag = decodeURIComponent(tag)
             var count = Object.keys(self.usersTagged(tag)).length
-            if (state.invalidTags[tag] || !(count || state.alwaysShowTags[tag])) return ''
+            if (!validateFirebaseKey(tag) || !(count || state.alwaysShowTags[tag])) return ''
             return (
               <span key={reactKey}>
                 <a
