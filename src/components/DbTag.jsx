@@ -2,6 +2,7 @@ import React from 'react'
 import { Router, Route } from 'react-router'
 
 import Promise from 'bluebird'
+window.jQuery = require('jquery')
 
 import Navbar from './Navbar.jsx'
 import PostList from './PostList.jsx'
