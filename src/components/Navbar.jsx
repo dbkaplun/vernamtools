@@ -75,7 +75,7 @@ export default React.createClass({
                         <span className="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul className="dropdown-menu">
-                        <li><Link to="/settings" className="btn btn-danger">Settings</Link></li>
+                        <li><Link to="/settings">Settings</Link></li>
                         <li role="separator" className="divider"></li>
                         <li><a href="" onClick={this.handleLogout}>Logout</a></li>
                       </ul>
