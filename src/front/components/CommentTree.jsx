@@ -6,15 +6,17 @@ import moment from 'moment'
 import marked from 'marked'
 import SimpleMDE from 'simplemde'
 
+import contextTypes from './contextTypes'
 import CommentForm from './CommentForm.jsx'
 
 var CommentTree = React.createClass({
   mixins: [ReactFireMixin],
+  contextTypes: contextTypes,
   getInitialState () {
     return {comments: []}
   },
   componentDidMount () {
-    this.fbRef = this.props.app.fbRef.child(`comments/${encodeURIComponent(this.props.forPath)}`)
+    this.fbRef = this.context.fbRef.child(`comments/${encodeURIComponent(this.props.forPath)}`)
     this.bindAsArray(this.fbRef, 'comments')
   },
   toggleCommentPropHandler (comment, prop) {
@@ -38,11 +40,9 @@ var CommentTree = React.createClass({
   },
   render () {
     var self = this
-    var state = self.state
-    var app = self.props.app
     return (
       <ul className={`comment-list media-list ${this.props.className}`}>
-        {state.comments.map((comment, commentIndex) => {
+        {self.state.comments.map((comment, commentIndex) => {
           var createdDate = moment(comment.createdDate)
           var path = `comments/${comment['.key']}`
           return (
@@ -64,12 +64,11 @@ var CommentTree = React.createClass({
                   </div>
                   <CommentForm
                     forPath={path}
-                    app={app}
                     className={comment._replyFormVisible ? '' : 'hide'}
                     toggleVisible={self.toggleCommentPropHandler(comment, '_replyFormVisible')} />
                 </div>
               </div>
-              <CommentTree forPath={path} app={app} className={comment._folded ? 'hide' : ''} />
+              <CommentTree forPath={path} className={comment._folded ? 'hide' : ''} />
             </li>
           )
         })}

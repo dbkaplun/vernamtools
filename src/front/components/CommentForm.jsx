@@ -2,23 +2,28 @@ import React from 'react'
 
 import SimpleMDE from 'simplemde'
 
+import contextTypes from './contextTypes'
+
 export default React.createClass({
   getInitialState () {
     return {
       comment: {raw: ''}
     }
   },
+  contextTypes: contextTypes,
   postCommentForm (evt) {
     evt.preventDefault()
     var self = this
-    var app = self.props.app
-    if (!app.u.isLoggedIn()) {
+    var context = self.context
+    var app = context.app
+    var u = context.u
+    if (!u.isLoggedIn()) {
       app.alertFromError(new Error("Please login before posting a comment."))
       return
     }
     var comment = self.state.comment
-    comment.userKey = app.u.user['.key']
-    return app.fbRef.child(`comments/${encodeURIComponent(self.props.forPath)}`).push(comment, err => {
+    comment.userKey = u.user['.key']
+    return context.fbRef.child(`comments/${encodeURIComponent(self.props.forPath)}`).push(comment, err => {
       if (err) {
         app.alertFromError(err)
         return

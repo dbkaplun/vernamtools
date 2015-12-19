@@ -2,12 +2,14 @@ import React from 'react'
 import ReactFireMixin from 'reactfire'
 import { Link } from 'react-router'
 
+import contextTypes from './contextTypes'
 import PostHeader from './PostHeader.jsx'
 import CommentForm from './CommentForm.jsx'
 import CommentTree from './CommentTree.jsx'
 
 export default React.createClass({
   mixins: [ReactFireMixin],
+  contextTypes: contextTypes,
   getInitialState () {
     return {
       post: {
@@ -23,7 +25,7 @@ export default React.createClass({
   componentDidMount () {
     var path = this.getPath()
     if (!path) throw new Error("postKey prop required")
-    this.bindAsObject(this.props.app.fbRef.child(path), 'post')
+    this.bindAsObject(this.context.fbRef.child(path), 'post')
   },
   toggleCommentFormVisible (evt) {
     if (evt) evt.preventDefault()
@@ -31,7 +33,6 @@ export default React.createClass({
   },
   render () {
     var post = this.state.post
-    var app = this.props.app
     var commentFormVisible = this.state.commentFormVisible
     var path = this.getPath()
     return (
@@ -40,13 +41,12 @@ export default React.createClass({
           <li><Link to="/">Latest posts</Link></li>
           <li className="active"><a href={window.location}>{post.title || post.url}</a></li>
         </ol>
-        <PostHeader post={post} commentsText={true} app={app} />
+        <PostHeader post={post} commentsText={true} />
         {post
           ? (
               <div>
                 <CommentForm
                   forPath={path}
-                  app={app}
                   className={commentFormVisible ? '' : 'hide'}
                   toggleVisible={this.toggleCommentFormVisible} />
                 <h2>
@@ -57,7 +57,7 @@ export default React.createClass({
                   </button>
                   Comments
                 </h2>
-                <CommentTree forPath={path} app={app} />
+                <CommentTree forPath={path} />
               </div>
             )
           : (

@@ -6,21 +6,17 @@ import Promise from 'bluebird'
 import Firebase from 'firebase'
 import _ from 'lodash'
 
-import UserService from '../../UserService'
+import contextTypes from './contextTypes'
 
 export default React.createClass({
   mixins: [ReactFireMixin],
+  contextTypes: contextTypes,
   getInitialState () {
     return {
       user: {
         nick: ''
       }
     }
-  },
-  contextTypes: {
-    app: React.PropTypes.object,
-    fbRef: React.PropTypes.instanceOf(Firebase),
-    u: React.PropTypes.instanceOf(UserService)
   },
   componentDidMount () {
     var self = this
@@ -51,13 +47,16 @@ export default React.createClass({
       .call('val')
       .then(userKey => {
         var userFormKey = user['.key']
-        if (userKey && userKey !== userFormKey) throw new Error("nick taken")
+        if (userKey) {
+          if (userKey === userFormKey) return // user already owns the nick
+          else throw new Error("nick taken")
+        }
+        var oldNick = (u.user || {}).nick
         return nickRef.setAsync(userFormKey)
+          .then(() => { if (oldNick && oldNick !== user.nick) return Promise.promisifyAll(context.fbRef.child(`nicks/${oldNick}`)).remove() })
+          .then(() => self.userRef.updateAsync(_.omit(user, '.key', '.value')))
+          .then(() => u.updateUser())
       })
-      .then(() => (u.user || {}).nick)
-      .then(oldNick => { if (oldNick) return Promise.promisifyAll(context.fbRef.child(`nicks/${oldNick}`)).remove() })
-      .then(() => self.userRef.updateAsync(_.omit(user, '.key', '.value')))
-      .then(() => u.updateUser())
       .catch(context.app.alertFromError)
       .done()
   },

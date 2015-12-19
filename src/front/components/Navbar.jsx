@@ -1,7 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router'
 
+import contextTypes from './contextTypes'
+
 export default React.createClass({
+  contextTypes: contextTypes,
   getInitialState () {
     return {
       emailForm: {
@@ -13,23 +16,22 @@ export default React.createClass({
   handleRegister (evt) {
     evt.preventDefault()
     var self = this
-    var app = self.props.app
-
-    app.fbRef.createUserAsync(this.state.emailForm)
+    var context = self.context
+    context.fbRef.createUserAsync(this.state.emailForm)
       .then(this.getUserWithEmailForm)
-      .catch(app.alertFromError)
+      .catch(context.app.alertFromError)
       .done()
   },
   getUserWithEmailForm () {
-    return this.props.app.u.getUserWithPassword(this.state.emailForm)
+    return this.context.u.getUserWithPassword(this.state.emailForm)
   },
   handleLogin (evt) {
     evt.preventDefault()
-    this.getUserWithEmailForm().catch(this.props.app.alertFromError).done()
+    this.getUserWithEmailForm().catch(this.context.app.alertFromError).done()
   },
   handleLogout (evt) {
     evt.preventDefault()
-    this.props.app.u.logOut()
+    this.context.u.logOut()
   },
   handleEmailFormChange (evt) {
     evt.preventDefault()
@@ -40,14 +42,14 @@ export default React.createClass({
   oAuthHandler (provider) {
     throw new Error("not implemented")
     var self = this
-    var app = self.props.app
+    var context = self.context
     return evt => {
       evt.preventDefault()
-      app.u.getUserWithOAuthRedirectHandler(provider).catch(app.alertFromError).done()
+      context.u.getUserWithOAuthRedirectHandler(provider).catch(context.app.alertFromError).done()
     }
   },
   render () {
-    var u = this.props.app.u
+    var u = this.context.u
     var user = u.user || {}
     var userParam = user.nick || user['.key']
     return (

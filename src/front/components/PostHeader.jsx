@@ -4,9 +4,11 @@ import { Link } from 'react-router'
 import url from 'url'
 import moment from 'moment'
 
+import contextTypes from './contextTypes'
 import Tags from './Tags.jsx'
 
 export default React.createClass({
+  contextTypes: contextTypes,
   getPath () {
     var postKey = (this.props.post || {})['.key']
     if (!postKey) return
@@ -27,7 +29,7 @@ export default React.createClass({
                 : (
                   <dl className="dl-horizontal dl-horizontal-right text-muted">
                     <dt><span className="glyphicon glyphicon-tag" aria-hidden="true"></span></dt>
-                    <dd><Tags forPath={path} app={props.app} /></dd>
+                    <dd><Tags forPath={path} /></dd>
                     <dt><span className="glyphicon glyphicon-comment" aria-hidden="true"></span></dt>
                     <dd>{props.commentsText
                       ? "comments"

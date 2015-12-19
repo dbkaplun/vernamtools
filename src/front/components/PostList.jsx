@@ -2,9 +2,11 @@ import React from 'react'
 import ReactFireMixin from 'reactfire'
 import { Link } from 'react-router'
 
+import contextTypes from './contextTypes'
 import PostHeader from './PostHeader.jsx'
 
 export default React.createClass({
+  contextTypes: contextTypes,
   mixins: [ReactFireMixin],
   getInitialState () {
     return {
@@ -13,7 +15,7 @@ export default React.createClass({
     }
   },
   componentDidMount () {
-    this.bindAsArray(this.props.app.fbRef.child('posts')
+    this.bindAsArray(this.context.fbRef.child('posts')
       .orderByChild('createdDate')
       .limitToLast(this.state.pageSize), 'posts')
   },
@@ -29,7 +31,7 @@ export default React.createClass({
           </h2>
         </div>
         {this.state.posts.map((post, postIndex) => (
-          <PostHeader post={post} app={this.props.app} key={postIndex} />
+          <PostHeader post={post} key={postIndex} />
         ))}
       </div>
     )

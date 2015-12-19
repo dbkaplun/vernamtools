@@ -12,10 +12,12 @@ import PostCreate from './PostCreate.jsx'
 import PostDetail from './PostDetail.jsx'
 import Settings from './Settings.jsx'
 
+import contextTypes from './contextTypes'
 import config from '../../../config'
 import UserService from '../../UserService'
 
-var App = React.createClass({
+export default React.createClass({
+  childContextTypes: contextTypes,
   getInitialState () {
     return {alerts: []}
   },
@@ -60,14 +62,10 @@ var App = React.createClass({
     this.setState({alerts})
   },
 
-  createElement (Component, props) {
-    props.app = this
-    return <Component {...props} />
-  },
   render () {
     return (
       <div>
-        <Navbar app={this} />
+        <Navbar />
         <main className="container">
           <div>
             {this.state.alerts.map((alert, alertIndex) => (
@@ -82,7 +80,7 @@ var App = React.createClass({
               </div>
             ))}
           </div>
-          <Router history={this.history} createElement={this.createElement}>
+          <Router history={this.history}>
             <Route path="/" component={PostList} />
             <Route path="/settings" component={Settings} />
             <Route path="/posts/create" component={PostCreate} />
@@ -94,11 +92,3 @@ var App = React.createClass({
     )
   }
 })
-App.childContextTypes = {
-  app: React.PropTypes.instanceOf(App),
-  fbRef: React.PropTypes.instanceOf(Firebase),
-  history: React.PropTypes.object,
-  u: React.PropTypes.instanceOf(UserService)
-}
-
-export default App

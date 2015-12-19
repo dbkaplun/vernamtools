@@ -5,7 +5,10 @@ import TagsInput from 'react-tagsinput'
 
 import _ from 'lodash'
 
+import contextTypes from './contextTypes'
+
 export default React.createClass({
+  contextTypes: contextTypes,
   getInitialState () {
     return {
       postForm: {
@@ -27,7 +30,7 @@ export default React.createClass({
     evt.preventDefault()
     var postForm = this.state.postForm
     postForm.createdDate = Date.now()
-    var postRef = this.props.app.fbRef.child('posts').push(postForm, err => {
+    var postRef = this.context.fbRef.child('posts').push(postForm, err => {
       if (err) return alert(err.toString())
       window.location = `#/posts/${postRef.key()}`
     })
