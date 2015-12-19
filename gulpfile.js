@@ -26,10 +26,10 @@ var flatten = require('gulp-flatten')
 // html
 var htmlmin = require('gulp-htmlmin')
 
-var PostMonitor = require('./bin/PostMonitor')
+var PostMonitor = require('./src/back/PostMonitor')
 var config = require('./config')
 
-var src = 'src/'
+var src = 'src/front/'
 var dist = 'dist/'
 
 var watching = false

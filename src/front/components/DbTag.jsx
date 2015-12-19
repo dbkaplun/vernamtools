@@ -9,8 +9,8 @@ import PostList from './PostList.jsx'
 import PostCreate from './PostCreate.jsx'
 import PostDetail from './PostDetail.jsx'
 
-import config from '../../config'
-import UserService from '../../util/UserService'
+import config from '../../../config'
+import UserService from '../../UserService'
 
 export default React.createClass({
   getInitialState () {

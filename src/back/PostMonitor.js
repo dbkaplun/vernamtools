@@ -8,7 +8,7 @@ var rp = require('request-promise')
 var Firebase = require('firebase')
 var Promise = require('bluebird')
 
-var UserService = require('../util/UserService')
+var UserService = require('../UserService')
 
 class PostMonitor {
   constructor (config) {
@@ -75,4 +75,4 @@ class PostMonitor {
 
 module.exports = PostMonitor
 
-if (require.main === module) new PostMonitor(require('../config')).watch()
+if (require.main === module) new PostMonitor(require('../../config')).watch()
