@@ -48,7 +48,7 @@ class UserService extends EventEmitter {
 
   logOut () {
     this.fbRef.unauth()
-    return this.handleAuth(null)
+    return this.updateUser()
   }
   updateUser () {
     return this.handleAuth(this.fbRef.getAuth())
@@ -86,7 +86,7 @@ class UserService extends EventEmitter {
       if (!uid) return null
       var uidRef = Promise.promisifyAll(fbRef.child(`uids/${uid}`))
       var usersRef = Promise.promisifyAll(fbRef.child('users'))
-      return new Promise((resolve, reject) => { uidRef.once('value', resolve) })
+      return new Promise(uidRef.once.bind(uidRef, 'value'))
         .call('val')
         // .then(userKey => {
         //   if (userKey !== null) return usersRef.child(userKey)
@@ -112,7 +112,7 @@ class UserService extends EventEmitter {
         })
         .then(userKey => {
           var userRef = Promise.promisifyAll(usersRef.child(userKey))
-          return new Promise((resolve, reject) => { userRef.once('value', resolve) })
+          return new Promise(userRef.once.bind(userRef, 'value'))
             .call('val')
             .then(user => {
               // set /users/${userKey}/auths/${auth.uid} = auth

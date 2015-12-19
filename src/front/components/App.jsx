@@ -2,25 +2,26 @@ import React from 'react'
 import { Router, Route } from 'react-router'
 
 import Promise from 'bluebird'
+import Firebase from 'firebase'
+import createHashHistory from 'history/lib/createHashHistory'
 window.jQuery = require('jquery')
 
 import Navbar from './Navbar.jsx'
 import PostList from './PostList.jsx'
 import PostCreate from './PostCreate.jsx'
 import PostDetail from './PostDetail.jsx'
+import Settings from './Settings.jsx'
 
 import config from '../../../config'
 import UserService from '../../UserService'
 
-export default React.createClass({
+var App = React.createClass({
   getInitialState () {
-    return {
-      user: null,
-      alerts: []
-    }
+    return {alerts: []}
   },
   componentWillMount () {
     var self = this
+    self.history = createHashHistory()
     self.fbRef = config.fbRef
     self.u = UserService.instance
     self.u.on('user', user => { self.forceUpdate() })
@@ -30,8 +31,17 @@ export default React.createClass({
       .catch(self.alertFromError)
       .done()
   },
+  getChildContext () {
+    return {
+      app: this,
+      fbRef: this.fbRef,
+      history: this.history,
+      u: this.u
+    }
+  },
 
   alertFromError (err) {
+    console.error(err)
     var alerts = this.state.alerts
     var alert = {
       className: err.className || 'alert-warning',
@@ -72,8 +82,9 @@ export default React.createClass({
               </div>
             ))}
           </div>
-          <Router createElement={this.createElement}>
+          <Router history={this.history} createElement={this.createElement}>
             <Route path="/" component={PostList} />
+            <Route path="/settings" component={Settings} />
             <Route path="/posts/create" component={PostCreate} />
             <Route path="/posts/:postKey" component={PostDetail} />
             <Route path="/users/:userKey" component={null} />
@@ -83,3 +94,11 @@ export default React.createClass({
     )
   }
 })
+App.childContextTypes = {
+  app: React.PropTypes.instanceOf(App),
+  fbRef: React.PropTypes.instanceOf(Firebase),
+  history: React.PropTypes.object,
+  u: React.PropTypes.instanceOf(UserService)
+}
+
+export default App
