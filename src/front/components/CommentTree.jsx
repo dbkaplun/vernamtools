@@ -9,6 +9,7 @@ import SimpleMDE from 'simplemde'
 
 import contextTypes from './contextTypes'
 import CommentForm from './CommentForm.jsx'
+import Tags from './Tags.jsx'
 
 var CommentTree = React.createClass({
   mixins: [ReactFireMixin],
@@ -74,6 +75,8 @@ var CommentTree = React.createClass({
                     <a onClick={self.toggleCommentPropHandler(comment, '_replyFormVisible')}>{comment._replyFormVisible ? 'cancel ' : ''}reply</a>
                     {' '}&bull;{' '}
                     <a onClick={self.toggleCommentPropHandler(comment, '_viewSource')}>{comment._viewSource ? 'hide' : 'view'} source</a>
+                    {' '}&bull;{' '}
+                    <Tags forPath={path} />
                   </div>
                   <CommentForm
                     forPath={path}
