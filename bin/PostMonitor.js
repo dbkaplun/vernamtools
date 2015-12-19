@@ -20,14 +20,17 @@ class PostMonitor {
   }
   watch () {
     var self = this
-    self.makeUser()
-    self.u.on('user', user => { if (!user) self.makeUser().done() })
+    var handleError = err => { console.error(err) }
+
+    self.makeUser().catch(handleError).done()
+    self.u.on('user', user => { if (!user) self.makeUser().catch(handleError).done() })
 
     ;['child_added', 'child_changed'].forEach(evt => {
       self.posts.on(evt, snapshot => {
         self.u.onUser()
           .then(() => self.updatePost(snapshot))
           .tap(post => { console.log(evt, moment().toString(), post) })
+          .catch(handleError)
           .done()
       })
     })

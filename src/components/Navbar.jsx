@@ -17,6 +17,7 @@ export default React.createClass({
 
     dbtag.fbRef.createUserAsync(this.state.emailForm)
       .then(this.getUserWithEmailForm)
+      .catch(dbtag.alertFromError)
       .done()
   },
   getUserWithEmailForm () {
@@ -24,12 +25,11 @@ export default React.createClass({
   },
   handleLogin (evt) {
     evt.preventDefault()
-    this.getUserWithEmailForm().done()
+    this.getUserWithEmailForm().catch(this.props.dbtag.alertFromError).done()
   },
   handleLogout (evt) {
     evt.preventDefault()
     this.props.dbtag.fbRef.unauth()
-    this.render()
   },
   handleEmailFormChange (evt) {
     evt.preventDefault()
@@ -40,9 +40,10 @@ export default React.createClass({
   oAuthHandler (provider) {
     throw new Error("not implemented")
     var self = this
+    var dbtag = self.props.dbtag
     return evt => {
       evt.preventDefault()
-      self.props.dbtag.u.getUserWithOAuthRedirectHandler(provider).done()
+      dbtag.u.getUserWithOAuthRedirectHandler(provider).catch(dbtag.alertFromError).done()
     }
   },
   render () {
@@ -76,7 +77,7 @@ export default React.createClass({
                       <ul className="dropdown-menu">
                         <li><Link to="/settings" className="btn btn-danger">Settings</Link></li>
                         <li role="separator" className="divider"></li>
-                        <li><a onClick={this.handleLogout}>Logout</a></li>
+                        <li><a href="" onClick={this.handleLogout}>Logout</a></li>
                       </ul>
                     </div>
                   </div>

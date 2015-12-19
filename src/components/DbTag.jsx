@@ -27,6 +27,7 @@ export default React.createClass({
     self.u.on('error', err => { self.alertFromError(err) })
     self.u.updateUser()
       .then(user => user || self.u.getUserAnonymously())
+      .catch(self.alertFromError)
       .done()
   },
 

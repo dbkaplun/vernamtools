@@ -53,9 +53,7 @@ export default React.createClass({
   toggleTagHandler (tag, evt) {
     if (evt) evt.preventDefault()
     var self = this
-    self.toggleTag(tag)
-      .catch((err) => { self.props.dbtag.alertFromError(err) })
-      .done()
+    self.toggleTag(tag).catch(self.props.dbtag.alertFromError).done()
   },
   setNewTagFormVisibility (visible, evt) {
     if (evt) evt.preventDefault()
@@ -69,8 +67,8 @@ export default React.createClass({
     var self = this
     var newTag = self.state.newTag
     if (newTag) self.toggleTag(newTag, true)
-      .then(() => { self.setState({newTag: ''}) })
-      .catch((err) => { self.props.dbtag.alertFromError(err) })
+      .tap(() => { self.setState({newTag: ''}) })
+      .catch(self.props.dbtag.alertFromError)
       .done()
     else self.setNewTagFormVisibility(false)
   },
