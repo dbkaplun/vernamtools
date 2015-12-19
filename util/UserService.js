@@ -46,6 +46,10 @@ class UserService extends EventEmitter {
         })
   }
 
+  logOut () {
+    this.fbRef.unauth()
+    return this.handleAuth(null)
+  }
   updateUser () {
     return this.handleAuth(this.fbRef.getAuth())
   }

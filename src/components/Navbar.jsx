@@ -29,7 +29,7 @@ export default React.createClass({
   },
   handleLogout (evt) {
     evt.preventDefault()
-    this.props.dbtag.fbRef.unauth()
+    this.props.dbtag.u.logOut()
   },
   handleEmailFormChange (evt) {
     evt.preventDefault()
