@@ -72,20 +72,26 @@ class UserService extends EventEmitter {
   handleAuth (auth) {
     return Promise.resolve(auth)
       .tap(this.emit.bind(this, 'auth'))
-      .then(auth => this.constructor.getUser(auth, this.fbRef))
+      .then(this.getUserByAuth.bind(this))
       .tap(this.emit.bind(this, 'user'))
       .catch(err => {
         this.emit('error', err)
         throw err
       })
   }
-  static getUser (auth, fbRef) {
+  getUserByKey (key) {
+    if (!key) return Promise.resolve(null)
+    var userRef = Promise.promisifyAll(this.fbRef.child(`users/${key}`))
+    return new Promise(userRef.once.bind(userRef, 'value')).call('val')
+  }
+  getUserByAuth (auth) {
+    var self = this
     return Promise.resolve(auth).then(auth => {
       auth = auth || {}
       var uid = auth.uid
       if (!uid) return null
-      var uidRef = Promise.promisifyAll(fbRef.child(`uids/${uid}`))
-      var usersRef = Promise.promisifyAll(fbRef.child('users'))
+      var uidRef = Promise.promisifyAll(self.fbRef.child(`uids/${uid}`))
+      var usersRef = Promise.promisifyAll(self.fbRef.child('users'))
       return new Promise(uidRef.once.bind(uidRef, 'value'))
         .call('val')
         // .then(userKey => {

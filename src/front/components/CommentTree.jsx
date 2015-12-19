@@ -2,6 +2,7 @@ import React from 'react'
 import ReactFireMixin from 'reactfire'
 import { Link } from 'react-router'
 
+import Promise from 'bluebird'
 import moment from 'moment'
 import marked from 'marked'
 import SimpleMDE from 'simplemde'
@@ -18,6 +19,18 @@ var CommentTree = React.createClass({
   componentDidMount () {
     this.fbRef = this.context.fbRef.child(`comments/${encodeURIComponent(this.props.forPath)}`)
     this.bindAsArray(this.fbRef, 'comments')
+  },
+  componentWillUpdate (props, state) {
+    var self = this
+    var context = self.context
+    Promise.map(state.comments, comment => {
+      return comment._user || context.u.getUserByKey(comment.userKey)
+        .tap(user => {
+          comment._user = user
+          self.forceUpdate()
+        })
+        .catch(context.app.alertFromError)
+    }).done()
   },
   toggleCommentPropHandler (comment, prop) {
     var self = this
@@ -51,7 +64,7 @@ var CommentTree = React.createClass({
                 <h5 className="media-heading">
                   <small><a onClick={self.toggleCommentPropHandler(comment, '_folded')}>[{comment._folded ? '+' : '-'}]</a></small>
                   {' '}
-                  <Link to={`users/${comment.userKey}`}>{comment.userKey}</Link>
+                  <Link to={`users/${comment.userKey}`}>{(comment._user || {}).nick || comment.userKey}</Link>
                   <small title={createdDate.format('lll')}>, {createdDate.fromNow()}</small>
                 </h5>
                 <div className={comment._folded ? 'hide' : ''}>
