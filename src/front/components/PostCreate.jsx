@@ -27,7 +27,7 @@ export default React.createClass({
     evt.preventDefault()
     var postForm = this.state.postForm
     postForm.createdDate = Date.now()
-    var postRef = this.props.dbtag.fbRef.child('posts').push(postForm, err => {
+    var postRef = this.props.app.fbRef.child('posts').push(postForm, err => {
       if (err) return alert(err.toString())
       window.location = `#/posts/${postRef.key()}`
     })

@@ -14,7 +14,7 @@ var CommentTree = React.createClass({
     return {comments: []}
   },
   componentDidMount () {
-    this.fbRef = this.props.dbtag.fbRef.child(`comments/${encodeURIComponent(this.props.forPath)}`)
+    this.fbRef = this.props.app.fbRef.child(`comments/${encodeURIComponent(this.props.forPath)}`)
     this.bindAsArray(this.fbRef, 'comments')
   },
   toggleCommentPropHandler (comment, prop) {
@@ -39,7 +39,7 @@ var CommentTree = React.createClass({
   render () {
     var self = this
     var state = self.state
-    var dbtag = self.props.dbtag
+    var app = self.props.app
     return (
       <ul className={`comment-list media-list ${this.props.className}`}>
         {state.comments.map((comment, commentIndex) => {
@@ -64,12 +64,12 @@ var CommentTree = React.createClass({
                   </div>
                   <CommentForm
                     forPath={path}
-                    dbtag={dbtag}
+                    app={app}
                     className={comment._replyFormVisible ? '' : 'hide'}
                     toggleVisible={self.toggleCommentPropHandler(comment, '_replyFormVisible')} />
                 </div>
               </div>
-              <CommentTree forPath={path} dbtag={dbtag} className={comment._folded ? 'hide' : ''} />
+              <CommentTree forPath={path} app={app} className={comment._folded ? 'hide' : ''} />
             </li>
           )
         })}

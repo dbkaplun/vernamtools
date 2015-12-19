@@ -23,7 +23,7 @@ export default React.createClass({
   componentDidMount () {
     var path = this.getPath()
     if (!path) throw new Error("postKey prop required")
-    this.bindAsObject(this.props.dbtag.fbRef.child(path), 'post')
+    this.bindAsObject(this.props.app.fbRef.child(path), 'post')
   },
   toggleCommentFormVisible (evt) {
     if (evt) evt.preventDefault()
@@ -31,7 +31,7 @@ export default React.createClass({
   },
   render () {
     var post = this.state.post
-    var dbtag = this.props.dbtag
+    var app = this.props.app
     var commentFormVisible = this.state.commentFormVisible
     var path = this.getPath()
     return (
@@ -40,13 +40,13 @@ export default React.createClass({
           <li><Link to="/">Latest posts</Link></li>
           <li className="active"><a href={window.location}>{post.title || post.url}</a></li>
         </ol>
-        <PostHeader post={post} commentsText={true} dbtag={dbtag} />
+        <PostHeader post={post} commentsText={true} app={app} />
         {post
           ? (
               <div>
                 <CommentForm
                   forPath={path}
-                  dbtag={dbtag}
+                  app={app}
                   className={commentFormVisible ? '' : 'hide'}
                   toggleVisible={this.toggleCommentFormVisible} />
                 <h2>
@@ -57,7 +57,7 @@ export default React.createClass({
                   </button>
                   Comments
                 </h2>
-                <CommentTree forPath={path} dbtag={dbtag} />
+                <CommentTree forPath={path} app={app} />
               </div>
             )
           : (

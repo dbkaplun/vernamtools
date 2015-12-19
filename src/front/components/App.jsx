@@ -51,13 +51,13 @@ export default React.createClass({
   },
 
   createElement (Component, props) {
-    props.dbtag = this
+    props.app = this
     return <Component {...props} />
   },
   render () {
     return (
       <div>
-        <Navbar dbtag={this} />
+        <Navbar app={this} />
         <main className="container">
           <div>
             {this.state.alerts.map((alert, alertIndex) => (

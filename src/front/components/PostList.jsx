@@ -13,7 +13,7 @@ export default React.createClass({
     }
   },
   componentDidMount () {
-    this.bindAsArray(this.props.dbtag.fbRef.child('posts')
+    this.bindAsArray(this.props.app.fbRef.child('posts')
       .orderByChild('createdDate')
       .limitToLast(this.state.pageSize), 'posts')
   },
@@ -29,7 +29,7 @@ export default React.createClass({
           </h2>
         </div>
         {this.state.posts.map((post, postIndex) => (
-          <PostHeader post={post} dbtag={this.props.dbtag} key={postIndex} />
+          <PostHeader post={post} app={this.props.app} key={postIndex} />
         ))}
       </div>
     )

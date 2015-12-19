@@ -27,7 +27,7 @@ export default React.createClass({
                 : (
                   <dl className="dl-horizontal dl-horizontal-right text-muted">
                     <dt><span className="glyphicon glyphicon-tag" aria-hidden="true"></span></dt>
-                    <dd><Tags forPath={path} dbtag={props.dbtag} /></dd>
+                    <dd><Tags forPath={path} app={props.app} /></dd>
                     <dt><span className="glyphicon glyphicon-comment" aria-hidden="true"></span></dt>
                     <dd>{props.commentsText
                       ? "comments"

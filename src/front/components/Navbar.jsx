@@ -13,23 +13,23 @@ export default React.createClass({
   handleRegister (evt) {
     evt.preventDefault()
     var self = this
-    var dbtag = self.props.dbtag
+    var app = self.props.app
 
-    dbtag.fbRef.createUserAsync(this.state.emailForm)
+    app.fbRef.createUserAsync(this.state.emailForm)
       .then(this.getUserWithEmailForm)
-      .catch(dbtag.alertFromError)
+      .catch(app.alertFromError)
       .done()
   },
   getUserWithEmailForm () {
-    return this.props.dbtag.u.getUserWithPassword(this.state.emailForm)
+    return this.props.app.u.getUserWithPassword(this.state.emailForm)
   },
   handleLogin (evt) {
     evt.preventDefault()
-    this.getUserWithEmailForm().catch(this.props.dbtag.alertFromError).done()
+    this.getUserWithEmailForm().catch(this.props.app.alertFromError).done()
   },
   handleLogout (evt) {
     evt.preventDefault()
-    this.props.dbtag.u.logOut()
+    this.props.app.u.logOut()
   },
   handleEmailFormChange (evt) {
     evt.preventDefault()
@@ -40,14 +40,14 @@ export default React.createClass({
   oAuthHandler (provider) {
     throw new Error("not implemented")
     var self = this
-    var dbtag = self.props.dbtag
+    var app = self.props.app
     return evt => {
       evt.preventDefault()
-      dbtag.u.getUserWithOAuthRedirectHandler(provider).catch(dbtag.alertFromError).done()
+      app.u.getUserWithOAuthRedirectHandler(provider).catch(app.alertFromError).done()
     }
   },
   render () {
-    var u = this.props.dbtag.u
+    var u = this.props.app.u
     var user = u.user || {}
     var userParam = user.nick || user['.key']
     return (

@@ -17,7 +17,7 @@ export default React.createClass({
     }
   },
   componentDidMount () {
-    this.fbRef = this.props.dbtag.fbRef.child(`tags/${encodeURIComponent(this.props.forPath)}`)
+    this.fbRef = this.props.app.fbRef.child(`tags/${encodeURIComponent(this.props.forPath)}`)
     this.bindAsObject(this.fbRef, 'tags')
   },
   shouldComponentUpdate (nextProps, nextState) {
@@ -34,7 +34,7 @@ export default React.createClass({
     var self = this
     return new Promise((resolve, reject) => {
       if (self.state.invalidTags[tag]) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
-      var u = self.props.dbtag.u
+      var u = self.props.app.u
       if (!u.isLoggedIn()) return reject(new Error("Please login before tagging."))
       var userKey = u.user['.key']
       self.fbRef.child(encodeURIComponent(tag)).transaction(users => {
@@ -53,7 +53,7 @@ export default React.createClass({
   toggleTagHandler (tag, evt) {
     if (evt) evt.preventDefault()
     var self = this
-    self.toggleTag(tag).catch(self.props.dbtag.alertFromError).done()
+    self.toggleTag(tag).catch(self.props.app.alertFromError).done()
   },
   setNewTagFormVisibility (visible, evt) {
     if (evt) evt.preventDefault()
@@ -68,7 +68,7 @@ export default React.createClass({
     var newTag = self.state.newTag
     if (newTag) self.toggleTag(newTag, true)
       .tap(() => { self.setState({newTag: ''}) })
-      .catch(self.props.dbtag.alertFromError)
+      .catch(self.props.app.alertFromError)
       .done()
     else self.setNewTagFormVisibility(false)
   },
@@ -79,7 +79,7 @@ export default React.createClass({
     var self = this
     var state = self.state
     var newTagFormVisible = state.newTagFormVisible
-    var u = self.props.dbtag.u
+    var u = self.props.app.u
     var loggedIn = u.isLoggedIn()
     return (
       <span className="tags">

@@ -11,16 +11,16 @@ export default React.createClass({
   postCommentForm (evt) {
     evt.preventDefault()
     var self = this
-    var dbtag = self.props.dbtag
-    if (!dbtag.u.isLoggedIn()) {
-      dbtag.alertFromError(new Error("Please login before posting a comment."))
+    var app = self.props.app
+    if (!app.u.isLoggedIn()) {
+      app.alertFromError(new Error("Please login before posting a comment."))
       return
     }
     var comment = self.state.comment
-    comment.userKey = dbtag.u.user['.key']
-    return dbtag.fbRef.child(`comments/${encodeURIComponent(self.props.forPath)}`).push(comment, err => {
+    comment.userKey = app.u.user['.key']
+    return app.fbRef.child(`comments/${encodeURIComponent(self.props.forPath)}`).push(comment, err => {
       if (err) {
-        dbtag.alertFromError(err)
+        app.alertFromError(err)
         return
       }
       self.props.toggleVisible()
