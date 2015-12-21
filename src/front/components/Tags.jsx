@@ -36,7 +36,7 @@ export default React.createClass({
   toggleTag (tag, val) {
     var self = this
     return new Promise((resolve, reject) => {
-      if (!validateFirebaseKey(tag)) return reject(_.merge(new Error("Invalid tag."), {className: 'alert-danger'}))
+      if (!validateFirebaseKey(tag)) return reject(_.merge(new Error("Invalid tag.")))
       var u = self.context.u
       if (!u.isLoggedIn()) return reject(new Error("Please login before tagging."))
       var userKey = u.user['.key']

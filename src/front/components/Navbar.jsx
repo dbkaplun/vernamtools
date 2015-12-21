@@ -96,7 +96,7 @@ export default React.createClass({
                         <input className="form-control" onChange={this.handleEmailFormChange} name="password" value={this.state.emailForm.password} type="password" placeholder="Password" />
                       </div>
                       {' '}
-                      <button className="btn btn-success">Login</button>
+                      <button className="btn btn-primary">Login</button>
                       {' '}
                       <button onClick={this.handleRegister} className="btn btn-danger">Register</button>
                     </form>

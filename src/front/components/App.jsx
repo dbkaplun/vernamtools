@@ -46,7 +46,7 @@ export default React.createClass({
     console.error(err)
     var alerts = this.state.alerts
     var alert = {
-      className: err.className || 'alert-warning',
+      className: err.className || 'alert-danger',
       children: err.contents || (
         <span>{err.message}</span>
       ),
@@ -69,7 +69,7 @@ export default React.createClass({
         <main className="container">
           <div>
             {this.state.alerts.map((alert, alertIndex) => (
-              <div className={`alert ${alert.className || 'alert-danger'}`} role="alert" key={alertIndex}>
+              <div className={`alert ${alert.className}`} role="alert" key={alertIndex}>
                 <button
                   className="close"
                   aria-label="Close"

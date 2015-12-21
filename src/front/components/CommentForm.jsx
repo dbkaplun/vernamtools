@@ -50,7 +50,7 @@ export default React.createClass({
         <div className="form-group">
           <textarea value={state.comment.raw} ref={this.initCommentEditor} className="form-control" />
         </div>
-        <button type="submit" className="btn btn-success">Post</button>
+        <button type="submit" className="btn btn-primary">Post</button>
         {' '}
         <button onClick={this.props.toggleVisible} className="btn btn-default">Cancel</button>
       </form>
