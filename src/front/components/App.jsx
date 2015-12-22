@@ -19,7 +19,10 @@ import UserService from '../../UserService'
 export default React.createClass({
   childContextTypes: contextTypes,
   getInitialState () {
-    return {alerts: []}
+    return {
+      alerts: [],
+      maxVisibleAlertCount: 5
+    }
   },
   componentWillMount () {
     var self = this
@@ -63,12 +66,15 @@ export default React.createClass({
   },
 
   render () {
+    var state = this.state
+    var alerts = state.alerts
+    var invisibleAlerts = Math.max(0, alerts.length - state.maxVisibleAlertCount)
     return (
       <div>
         <Navbar />
         <main className="container">
           <div>
-            {this.state.alerts.map((alert, alertIndex) => (
+            {alerts.slice(0, state.maxVisibleAlertCount).map((alert, alertIndex) => (
               <div className={`alert ${alert.className}`} role="alert" key={alertIndex}>
                 <button
                   className="close"
@@ -79,6 +85,9 @@ export default React.createClass({
                 {alert.children}
               </div>
             ))}
+            <p className={`text-muted ${invisibleAlerts ? '' : 'hide'}`}>
+              {invisibleAlerts} alert{invisibleAlerts === 1 ? '' : 's'} not shown
+            </p>
           </div>
           <Router history={this.history}>
             <Route path="/" component={PostList} />
