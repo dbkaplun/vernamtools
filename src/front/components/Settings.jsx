@@ -23,11 +23,9 @@ export default React.createClass({
     var self = this
     var context = self.context
     context.u.onUser().then(user => {
+      if (self.userRef) self.unbind('user')
       self.userRef = Promise.promisifyAll(self.context.fbRef.child(`users/${(user || {})['.key']}`))
-      if (self._userBound) self.unbind('user')
       self.bindAsObject(self.userRef, 'user')
-      // self.state.user = user
-      self._userBound = true
     })
   },
   handleUserFormChange (evt) {

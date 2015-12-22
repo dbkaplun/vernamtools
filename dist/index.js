@@ -71835,11 +71835,9 @@ exports.default = _react2.default.createClass({
     var self = this;
     var context = self.context;
     context.u.onUser().then(function (user) {
+      if (self.userRef) self.unbind('user');
       self.userRef = _bluebird2.default.promisifyAll(self.context.fbRef.child('users/' + (user || {})['.key']));
-      if (self._userBound) self.unbind('user');
       self.bindAsObject(self.userRef, 'user');
-      // self.state.user = user
-      self._userBound = true;
     });
   },
   handleUserFormChange: function handleUserFormChange(evt) {
