@@ -1,7 +1,5 @@
-var Promise = require('bluebird')
-var Firebase = require('firebase')
-var _ = require('lodash')
-var moment = require('moment')
+const _ = require('lodash')
+const moment = require('moment')
 
 try {
   var local = require('./local')
@@ -10,11 +8,11 @@ try {
 }
 
 var config = _.merge({
-  fbUrl: 'https://dbtag.firebaseio.com',
-  postMonitor: {
-    olderThan: moment.duration(5, 'minutes')
-  }
+  hostname: process.env.HOSTNAME || 'localhost',
+  port: parseInt(process.env.PORT, 10) || 4567,
+
+  snapshotInterval: moment.duration(1, 'seconds'),
+  maxBuffer: 1000*1024 // increase if you are getting "stdout maxBuffer exceeded." errors
 }, local)
-config.fbRef = Promise.promisifyAll(new Firebase(config.fbUrl))
 
 module.exports = config

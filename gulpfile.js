@@ -12,8 +12,6 @@ var path = require('path')
 var browserify = require('browserify')
 var watchify = require('watchify')
 var uglify = require('gulp-uglify')
-var isogram = require('isogram')
-var str = require('string-to-stream')
 
 // css
 var less = require('gulp-less')
@@ -26,7 +24,7 @@ var flatten = require('gulp-flatten')
 // html
 var htmlmin = require('gulp-htmlmin')
 
-var PostMonitor = require('./src/back/PostMonitor')
+var WebtopServer = require('./src/back/WebtopServer')
 var config = require('./config')
 
 var src = 'src/front/'
@@ -34,9 +32,8 @@ var dist = 'dist/'
 
 var watching = false
 var b = watchify(browserify(watchify.args))
-  .transform('babelify', {presets: ['es2015', 'react']})
+  .transform('babelify')
   .add(src+'index.jsx')
-  .add(str(isogram({id: 'UA-63592021-1'})))
   .on('log', gutil.log)
 
 function bundle () {
@@ -71,7 +68,7 @@ gulp.task('build-css', () => {
 gulp.task('build-html', ['build-js', 'build-css', 'build-fonts'], () => {
   return gulp.src(src+'index.html')
     .pipe(htmlmin({collapseWhitespace: true, removeComments: true}))
-    .pipe(gulp.dest('.'))
+    .pipe(gulp.dest(dist))
 })
 gulp.task('build', ['build-html'])
 
@@ -82,9 +79,10 @@ gulp.task('watch', ['before-watch', 'build'], () => {
   gulp.watch('**/*.html', ['build-html'])
 })
 
-gulp.task('monitor-posts', () => {
-  new PostMonitor(config).watch()
+gulp.task('serve', () => {
+  new WebtopServer(config).listen()
 })
 
-gulp.task('dev', ['watch', 'monitor-posts'])
-gulp.task('default', ['build'])
+gulp.task('dev', ['watch', 'serve'])
+gulp.task('start', ['build', 'serve'])
+gulp.task('default', ['start'])

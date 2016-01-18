@@ -1,20 +1,15 @@
 import React from 'react'
-import { Router, Route } from 'react-router'
+import {Router, Route} from 'react-router'
 
 import Promise from 'bluebird'
-import Firebase from 'firebase'
 import createHashHistory from 'history/lib/createHashHistory'
-window.jQuery = require('jquery')
 
 import Navbar from './Navbar.jsx'
-import PostList from './PostList.jsx'
-import PostCreate from './PostCreate.jsx'
-import PostDetail from './PostDetail.jsx'
+import ProcessList from './ProcessList.jsx'
 import Settings from './Settings.jsx'
 
 import contextTypes from './contextTypes'
 import config from '../../../config'
-import UserService from '../../UserService'
 
 export default React.createClass({
   childContextTypes: contextTypes,
@@ -27,21 +22,11 @@ export default React.createClass({
   componentWillMount () {
     var self = this
     self.history = createHashHistory()
-    self.fbRef = config.fbRef
-    self.u = UserService.instance
-    self.u.on('user', user => { self.forceUpdate() })
-    self.u.on('error', err => { self.alertFromError(err) })
-    self.u.updateUser()
-      // .then(user => user || self.u.getUserAnonymously())
-      .catch(self.alertFromError)
-      .done()
   },
   getChildContext () {
     return {
       app: this,
-      fbRef: this.fbRef,
-      history: this.history,
-      u: this.u
+      history: this.history
     }
   },
 
@@ -90,11 +75,8 @@ export default React.createClass({
             </p>
           </div>
           <Router history={this.history}>
-            <Route path="/" component={PostList} />
+            <Route path="/" component={ProcessList} />
             <Route path="/settings" component={Settings} />
-            <Route path="/posts/create" component={PostCreate} />
-            <Route path="/posts/:postKey" component={PostDetail} />
-            <Route path="/users/:userKey" component={null} />
           </Router>
         </main>
       </div>

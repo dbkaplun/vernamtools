@@ -4,55 +4,13 @@
 @dl-horizontal-offset: 1.5em;
 .dl-horizontal dt { width: auto; }
 
-@import (less) "node_modules/react-tagsinput/react-tagsinput.css";
-@import (less) "node_modules/simplemde/dist/simplemde.min.css";
+@import (less) "node_modules/fixed-data-table/dist/fixed-data-table.css";
+.sort-header-cell { cursor: pointer; }
 
-.label .muted {
-  font-weight: normal;
-  .label-primary& { color: lighten(@label-primary-bg, 33%); }
-  .label-default& { color: lighten(@label-default-bg, 33%); }
-  .label-danger& { color: lighten(@label-danger-bg, 33%); }
-}
+@ps-table-row-height: 35px; // FIXME: duplicated in components/ProcessList.jsx
 
-.form-control.tag-container {
-  padding: 2px 12px;
-  height: auto;
-  .label {
-    display: inline-block;
-    margin-right: 5px;
-    a {
-      color: @label-color;
-      text-decoration: none;
-
-      &::before:extend(.react-tagsinput-tag a::before) {}
-    }
-    &.label-primary a::before:extend(.label-primary.label .muted) {}
-  }
-  input { margin: 0; }
-}
-
-.comment-list {
-  margin-top: @padding-large-vertical * 2;
-  border-left: 3px solid @gray-lighter;
-  padding-left: @padding-large-horizontal;
-  .comment {
-    &.comment-folded {
-      opacity: .5;
-    }
-    &:focus {
-      background: @gray-lighter;
-      outline: none;
-    }
-  }
-}
-
-.dl-horizontal-right {
-  dt { float: right; clear: right; text-align: left; }
-  dd { margin: 0 @dl-horizontal-offset 0 0; text-align: right; }
-}
-
-.tags {
-  .tag { display: inline-block; vertical-align: middle; }
-  form { width: 5em; display: inline-block; }
-  input { height: 18px; }
+.column-Tree-body-cell {
+  font-family: @font-family-monospace; white-space: pre; text-overflow: clip; cursor: default;
+  line-height: @ps-table-row-height; font-size: @ps-table-row-height / 1.2;
+  .public_fixedDataTableCell_cellContent { padding-top: 0; padding-bottom: 0; }
 }
