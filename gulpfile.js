@@ -80,9 +80,8 @@ gulp.task('watch', ['before-watch', 'build'], () => {
 })
 
 gulp.task('serve', () => {
-  new WebtopServer(config).listen()
+  new WebtopServer(config).main()
 })
 
 gulp.task('dev', ['watch', 'serve'])
-gulp.task('start', ['build', 'serve'])
-gulp.task('default', ['start'])
+gulp.task('default', ['serve'])

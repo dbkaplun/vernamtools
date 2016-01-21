@@ -1,11 +1,15 @@
 {
   "name": "webtop",
   "version": "1.0.0",
-  "description": "webtop",
-  "main": "index.html",
+  "description": "The web process monitor",
+  "main": "src/back",
+  "bin": {
+    "webtop": "src/back/index.js"
+  },
   "scripts": {
-    "build": "gulp",
-    "watch": "gulp watch",
+    "start": "gulp",
+    "dev": "gulp dev",
+    "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

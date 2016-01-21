@@ -48,7 +48,17 @@ class WebtopServer {
   }
 
   listen () {
-    this.app.listen(this.opts.port, this.opts.hostname)
+    var listener
+    return new Promise(resolve => (
+      listener = this.app.listen(this.opts.port, this.opts.hostname, resolve)
+    )).then(() => listener)
+  }
+
+  main () {
+    this.listen()
+      .then(listener => listener.address())
+      .tap(bound => { console.error(`WebtopServer started: http://${bound.address}:${bound.port}`) })
+      .done()
   }
 
   static get psCmd () { return 'ps -Eeo pid,ppid,pcpu,pmem,user,args' }
@@ -64,4 +74,4 @@ class WebtopServer {
 
 module.exports = WebtopServer
 
-if (require.main === module) new WebtopServer(require('../../config')).listen()
+if (require.main === module) new WebtopServer(require('../../config')).main()
