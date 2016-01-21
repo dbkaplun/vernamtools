@@ -2,10 +2,11 @@
   "name": "webtop",
   "version": "1.0.0",
   "description": "The web process monitor",
+  "homepage": "https://github.com/dbkaplun/webtop#readme",
+  "bugs": "https://github.com/dbkaplun/webtop/issues",
   "main": "src/back",
-  "bin": {
-    "webtop": "src/back/index.js"
-  },
+  "bin": "src/back/index.js",
+  "preferGlobal": true,
   "scripts": {
     "start": "gulp",
     "dev": "gulp dev",
@@ -16,12 +17,6 @@
     "type": "git",
     "url": "git+https://github.com/dbkaplun/webtop.git"
   },
-  "author": "Dan Kaplun <dbkaplun@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dbkaplun/webtop/issues"
-  },
-  "homepage": "https://github.com/dbkaplun/webtop#readme",
   "dependencies": {
     "bluebird": "^3.0.5",
     "body-parser": "1.14.2",
@@ -63,5 +58,7 @@
   "peerDependencies": {
     "browserify-shim": "*",
     "history": "1.13.1"
-  }
+  },
+  "author": "Dan Kaplun <dbkaplun@gmail.com>",
+  "license": "MIT"
 }
