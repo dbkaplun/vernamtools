@@ -8,6 +8,7 @@ try {
 }
 
 var config = _.merge({
+  open: true,
   hostname: process.env.HOSTNAME || 'localhost',
   port: parseInt(process.env.PORT, 10) || 3370,
 

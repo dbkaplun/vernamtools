@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 const errorHandler = require('errorhandler')
 const Promise = require('bluebird')
 const _ = require('lodash')
+const opn = require('opn')
 
 const execAsync = Promise.promisify(require('child_process').exec)
 const parseColumns = require('parse-columns')
@@ -57,7 +58,14 @@ class WebtopServer {
   main () {
     this.listen()
       .then(listener => listener.address())
-      .tap(bound => { console.error(`WebtopServer started: http://${bound.address}:${bound.port}`) })
+      .then(bound => `http://${bound.address}:${bound.port}`)
+      .tap(address => {
+        console.error(`WebtopServer started: ${address}`)
+        if (this.opts.open) {
+          console.error("(opts.open = true, opening)")
+          opn(address)
+        }
+      })
       .done()
   }
 
