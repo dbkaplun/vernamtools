@@ -193,11 +193,12 @@ export default React.createClass({
       </HeaderCell>
     )
   },
-  renderBodyCell ({columnKey, rowIndex, ...props}) {
+  renderBodyCell ({columnKey, rowIndex, children, tooltip=true, ...props}) {
+    if (tooltip) props['data-toggle'] = 'tooltip'
     return (
       <Cell {...props}
         className={`column-${columnKey}-body-cell`}>
-        {props.children || this.state.displayPs[rowIndex].item[columnKey]}
+        {children || this.state.displayPs[rowIndex].item[columnKey]}
       </Cell>
     )
   },
@@ -259,7 +260,7 @@ export default React.createClass({
               columnKey="✓"
               header={<HeaderCell className="column-✓-body-cell"><input type="checkbox" ref="selectAll" checked={selectedPsCount === ps.length} onChange={this.toggleAllPs} /></HeaderCell>}
               cell={props => (
-                <BodyCell {...props}>
+                <BodyCell {...props} tooltip={false}>
                   <input type="checkbox" checked={selectedPIDs[displayPs[props.rowIndex].item.PID]} onChange={this.toggleP.bind(this, props.rowIndex)} />
                 </BodyCell>
               )}
@@ -308,7 +309,7 @@ export default React.createClass({
                 const TreeLevel = this.renderTreeLevel
                 var dp = displayPs[props.rowIndex]
                 return (
-                  <BodyCell {...props}>{state.treeView
+                  <BodyCell {...props} tooltip={!state.treeView}>{state.treeView
                     ? (
                         <span>
                           {dp.parents.map((parent, i) => {

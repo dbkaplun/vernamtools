@@ -11,7 +11,7 @@ ReactDOM.render((
 
 jQuery($ => {
   $('body').tooltip({
-    selector: '[data-toggle="tooltip"], .public_fixedDataTableCell_wrap1:not(.column-Tree-body-cell) .public_fixedDataTableCell_cellContent',
+    selector: '[data-toggle="tooltip"]',
     container: 'body',
     title: function () {
       var $el = $(this)
