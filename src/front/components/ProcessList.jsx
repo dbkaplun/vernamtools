@@ -302,49 +302,59 @@ export default React.createClass({
                 <SumFooterCell {...props} asType="string" />
               )}
               width={100} />
-            <Column
-              columnKey={state.treeView ? "Tree" : "PPID"}
-              header={HeaderCell}
-              cell={props => {
-                const TreeLevel = this.renderTreeLevel
-                var dp = displayPs[props.rowIndex]
-                return (
-                  <BodyCell {...props} tooltip={!state.treeView}>{state.treeView
-                    ? (
-                        <span>
-                          {dp.parents.map((parent, i) => {
-                            var parentLastChildPID = _.last(parent.children).item.PID
-                            return (
-                              <TreeLevel dp={parent} key={i}>
-                                {i === dp.parents.length - 1
-                                  ? parentLastChildPID === dp.item.PID
-                                    ? dp.children.length
-                                      ? '┗'
-                                      : '┖'
-                                    : dp.children.length
-                                      ? '┣'
-                                      : '┠'
-                                  : parentLastChildPID === dp.parents[i + 1].item.PID
-                                    ? ' '
-                                    : '┃'}
-                              </TreeLevel>
-                            )
-                          })}
-                          <TreeLevel dp={dp}>
-                            {dp.children.length
-                              ? state.foldedPIDs[dp.item.PID]
-                                ? '┭'
-                                : '┱'
-                              : ''}
-                            ╴
-                          </TreeLevel>
-                        </span>
-                      )
-                    : _.pluck(dp.parents, 'item.PID').join(", ")
-                  }</BodyCell>
-                )
-              }}
-              width={100} />
+            {state.treeView
+              ? (
+                <Column
+                  columnKey="Tree"
+                  header={HeaderCell}
+                  cell={props => {
+                    const TreeLevel = this.renderTreeLevel
+                    var dp = displayPs[props.rowIndex]
+                    return (
+                      <BodyCell {...props} tooltip={false}>
+                        {dp.parents.map((parent, i) => {
+                          var parentLastChildPID = _.last(parent.children).item.PID
+                          return (
+                            <TreeLevel dp={parent} key={i}>
+                              {i === dp.parents.length - 1
+                                ? parentLastChildPID === dp.item.PID
+                                  ? dp.children.length
+                                    ? '┗'
+                                    : '┖'
+                                  : dp.children.length
+                                    ? '┣'
+                                    : '┠'
+                                : parentLastChildPID === dp.parents[i + 1].item.PID
+                                  ? ' '
+                                  : '┃'}
+                            </TreeLevel>
+                          )
+                        })}
+                        <TreeLevel dp={dp}>
+                          {dp.children.length
+                            ? state.foldedPIDs[dp.item.PID]
+                              ? '┭'
+                              : '┱'
+                            : ''}
+                          ╴
+                        </TreeLevel>
+                      </BodyCell>
+                    )
+                  }}
+                  width={100} />
+              )
+              : (
+                <Column
+                  columnKey="PPID"
+                  header={HeaderCell}
+                  cell={props => (
+                    <BodyCell {...props}>
+                      {_.pluck(displayPs[props.rowIndex].parents, 'item.PID').join(", ")}
+                    </BodyCell>
+                  )}
+                  width={100} />
+              )
+            }
             <Column
               columnKey="ARGS"
               header={HeaderCell}
