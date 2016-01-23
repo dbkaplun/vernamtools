@@ -244,11 +244,13 @@ export default React.createClass({
             <button title="Tree view" type="button" className={`btn btn-success ${state.treeView ? 'active' : ''}`} onClick={this.toggleTreeView} data-toggle="tooltip">
               <span className="glyphicon glyphicon-tree-deciduous" aria-hidden="true"></span>
             </button>
-            <button title={selectedPsCount
+            <span data-toggle="tooltip" title={selectedPsCount
               ? `Only show ${selectedPsCount} selected`
-              : "No items selected"} type="button" disabled={!selectedPsCount} className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly} data-toggle="tooltip">
-              <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
-            </button>
+              : "No items selected"}>
+              <button type="button" disabled={!selectedPsCount} className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly}>
+                <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
+              </button>
+            </span>
           </div>
           <div className="input-group col-xs-4">
             <span className="input-group-addon"><span className="glyphicon glyphicon-search" aria-hidden="true"></span></span>

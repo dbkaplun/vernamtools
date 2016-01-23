@@ -10,12 +10,14 @@ ReactDOM.render((
 ), document.getElementById('app'))
 
 jQuery($ => {
-  $('body').tooltip({
-    selector: '[data-toggle="tooltip"]',
-    container: 'body',
-    title: function () {
-      var $el = $(this)
-      return $el.attr('title') || $el.text()
-    }
-  })
+  $('body')
+    .tooltip({
+      selector: '[data-toggle="tooltip"]',
+      container: 'body',
+      title: function () {
+        var $el = $(this)
+        return $el.attr('title') || $el.text()
+      }
+    })
+    .on('show.bs.tooltip', '*', evt => $('.tooltip').remove()) // FIXME: hack to ensure only one tooltip is shown at a time
 })
