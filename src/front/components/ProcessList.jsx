@@ -209,8 +209,7 @@ export default React.createClass({
       </HeaderCell>
     )
   },
-  renderBodyCell ({columnKey, rowIndex, children, tooltip=true, ...props}) {
-    if (tooltip) props['data-toggle'] = 'tooltip'
+  renderBodyCell ({columnKey, rowIndex, children, ...props}) {
     return (
       <Cell {...props}
         className={`column-${columnKey}-body-cell`}>
@@ -232,7 +231,7 @@ export default React.createClass({
   },
   renderSumFooterCell ({asType, ...props}) {
     return (
-      <Cell {...props} data-toggle="tooltip">{this.sumSelected(props.columnKey, asType)}</Cell>
+      <Cell {...props}>{this.sumSelected(props.columnKey, asType)}</Cell>
     )
   },
   render () {
@@ -284,7 +283,7 @@ export default React.createClass({
               columnKey="✓"
               header={<HeaderCell className="column-✓-body-cell"><input type="checkbox" ref="selectAll" checked={selectedPsCount === ps.length} onChange={this.toggleAllPs} /></HeaderCell>}
               cell={props => (
-                <BodyCell {...props} tooltip={false}>
+                <BodyCell {...props}>
                   <input type="checkbox" checked={selectedPIDs[displayPs[props.rowIndex].item.PID]} onChange={this.toggleP.bind(this, props.rowIndex)} />
                 </BodyCell>
               )}
@@ -335,7 +334,7 @@ export default React.createClass({
                     const TreeLevel = this.renderTreeLevel
                     var dp = displayPs[props.rowIndex]
                     return (
-                      <BodyCell {...props} tooltip={false}>
+                      <BodyCell {...props}>
                         {dp.parents.map((parent, i) => {
                           var parentLastChildPID = _.last(parent.children).item.PID
                           var isLastParent = i === dp.parents.length - 1
