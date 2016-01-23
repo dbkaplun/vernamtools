@@ -3,6 +3,7 @@
 import React from 'react'
 import {Link} from 'react-router'
 import {Table, Column, Cell} from 'fixed-data-table'
+import path from 'path'
 import _ from 'lodash'
 import $ from 'jquery'
 import moment from 'moment'
@@ -33,8 +34,9 @@ export default React.createClass({
       foldedPIDs: {},
       visiblePIDs: {},
       hoverPID: null,
-      showSelectedOnly: false,
+      fullCommand: false,
       treeView: false,
+      showSelectedOnly: false,
       sort: {columnKey: '%CPU', sortDir: SortHeaderCell.SortTypes.ASC},
       filter: '',
       psInterval: moment.duration(1, 'seconds'),
@@ -143,6 +145,9 @@ export default React.createClass({
     _.set(selectedPIDs, pid, !selectedPIDs[pid])
     this.setState({selectedPIDs})
   },
+  toggleFullCommand () {
+    this.setState({fullCommand: !this.state.fullCommand})
+  },
   toggleTreeView () {
     this.setState({treeView: !this.state.treeView})
   },
@@ -245,6 +250,10 @@ export default React.createClass({
       <div ref="root">
         <div className="clearfix media-heading">
           <div className="btn-group pull-left" role="group" aria-label="...">{[].concat([
+            <button title="Show full command" type="button" className={`btn btn-primary ${state.fullCommand ? 'active' : ''}`} onClick={this.toggleFullCommand} data-toggle="tooltip">
+              <span className="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
+            </button>
+          ]).concat([
             <button title="Tree view" type="button" className={`btn btn-success ${state.treeView ? 'active' : ''}`} onClick={this.toggleTreeView} data-toggle="tooltip">
               <span className="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span>
             </button>
@@ -373,13 +382,21 @@ export default React.createClass({
               )
             }
             <Column
-              columnKey="ARGS"
+              columnKey="Command"
               header={HeaderCell}
-              cell={props => (
-                <BodyCell {...props}><code>{displayPs[props.rowIndex].item[props.columnKey]}</code></BodyCell>
-              )}
+              cell={props => {
+                var comm = displayPs[props.rowIndex].item.COMM
+                var cmd = _.last(comm.split(path.sep))
+                var cmdPath = comm.slice(0, -cmd.length)
+                return (
+                  <BodyCell {...props}>
+                    {state.fullCommand ? cmdPath : ''}
+                    {state.fullCommand ? <b>{cmd}</b> : cmd}
+                  </BodyCell>
+                )
+              }}
               flexGrow={1}
-              width={500} />
+              width={350} />
           </Table>
         </div>
       </div>
