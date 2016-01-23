@@ -23,8 +23,9 @@ const HeaderCell = ({columnKey, children, ...props}) => (
 
 export default React.createClass({
   contextTypes: contextTypes,
-  getInitialState () {
-    return {
+  statics: {
+    sumColumns: _.pick(numericPsCols, (tmp, col) => col.match(/^%/)),
+    initialState: {
       ps: [],
       // generated directly from ps in componentWillUpdate
       displayPs: [],
@@ -45,10 +46,14 @@ export default React.createClass({
       tableMarginBottom: 15
     }
   },
-  statics: {
-    sumColumns: _.pick(numericPsCols, (tmp, col) => col.match(/^%/))
+  getInitialState () { return this.constructor.initialState },
+  getDefaultProps () {
+    return {
+      stateFilterKeys: ['fullCommand', 'treeView', 'sort', 'filter']
+    }
   },
   componentDidMount () {
+    this.setState(_.merge({}, this.state, JSON.parse(localStorage.processList || '{}')))
     this.pollPS()
     $(window).resize(this.onResize); this.onResize()
   },
@@ -98,6 +103,7 @@ export default React.createClass({
     var selectedPsCount = _.size(selectedPIDs)
     if (!selectedPsCount) state.showSelectedOnly = false
     this.refs.selectAll.indeterminate = selectedPsCount && selectedPsCount !== state.ps.length
+    localStorage.processList = JSON.stringify(_.pick(state, props.stateFilterKeys))
   },
   componentWillUnmount () {
     clearTimeout(this.state.psTimeoutRef)
