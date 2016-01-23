@@ -31,6 +31,7 @@ export default React.createClass({
 
       selectedPIDs: {},
       foldedPIDs: {},
+      visiblePIDs: {},
       hoverPID: null,
       showSelectedOnly: false,
       treeView: false,
@@ -66,11 +67,18 @@ export default React.createClass({
     })
 
     // now we filter and sort a complete displayPs
-    displayPs = displayPs.filter(dp =>
-      _.some(dp.item, val => val.toString().toLowerCase().indexOf(state.filter.toLowerCase()) !== -1) &&
+    state.visiblePIDs = {}
+    displayPs = displayPs.filter(dp => {
+      var isVisible = [dp].concat(state.treeView ? dp.parents : []).some(dpAncestor => (
+        _.some(dpAncestor.item, val => (
+          val.toString().toLowerCase().indexOf(state.filter.toLowerCase()) !== -1
+        ))
+      )) &&
       (!state.showSelectedOnly || selectedPIDs[dp.item.PID]) &&
       (!state.treeView || dp.parents.every(parent => !state.foldedPIDs[parent.item.PID]))
-    )
+      if (isVisible) state.visiblePIDs[dp.item.PID] = true
+      return isVisible
+    })
 
     if (!state.treeView) displayPs.sort((dpA, dpB) => {
       var aVal = dpA.item[sort.columnKey]
@@ -136,13 +144,13 @@ export default React.createClass({
     this.setState({selectedPIDs})
   },
   toggleTreeView () {
-    this.setState({treeView: !this.state.treeView, filter: ''})
+    this.setState({treeView: !this.state.treeView})
   },
   toggleShowSelectedOnly () {
     this.setState({showSelectedOnly: !this.state.showSelectedOnly})
   },
   setFilter (evt) {
-    this.setState({filter: evt.target.value, treeView: false})
+    this.setState({filter: evt.target.value})
   },
   onSortChange (columnKey, sortDir) {
     this.setState({sort: {columnKey, sortDir}, treeView: false})
@@ -314,9 +322,13 @@ export default React.createClass({
                       <BodyCell {...props} tooltip={false}>
                         {dp.parents.map((parent, i) => {
                           var parentLastChildPID = _.last(parent.children).item.PID
+                          var isLastParent = i === dp.parents.length - 1
+                          var isNextParentLastChild = !isLastParent && parentLastChildPID === dp.parents[i + 1].item.PID
+                          if (!state.visiblePIDs[parent.item.PID]) return
+                          if (isNextParentLastChild) return <span key={i}> </span>
                           return (
-                            <TreeLevel dp={parent} key={i}>
-                              {i === dp.parents.length - 1
+                            <TreeLevel dp={parent} title={parent.item.PID} data-toggle="tooltip" key={i}>
+                              {isLastParent
                                 ? parentLastChildPID === dp.item.PID
                                   ? dp.children.length
                                     ? '┗'
@@ -324,9 +336,7 @@ export default React.createClass({
                                   : dp.children.length
                                     ? '┣'
                                     : '┠'
-                                : parentLastChildPID === dp.parents[i + 1].item.PID
-                                  ? ' '
-                                  : '┃'}
+                                : '┃'}
                             </TreeLevel>
                           )
                         })}
