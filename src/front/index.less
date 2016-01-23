@@ -1,10 +1,19 @@
 @import "node_modules/bootstrap/less/bootstrap.less";
+@import "node_modules/bootswatch/spacelab/bootswatch.less";
+@import "node_modules/bootswatch/spacelab/variables.less";
 @icon-font-path: "fonts/";
 @dl-horizontal-breakpoint: 0;
 @dl-horizontal-offset: 1.5em;
 .dl-horizontal dt { width: auto; }
 
 @import (less) "node_modules/fixed-data-table/dist/fixed-data-table.css";
+
+.public_fixedDataTable_main {
+  border-radius: @border-radius-base;
+}
+.public_fixedDataTable_header, .public_fixedDataTable_header .public_fixedDataTableCell_main {
+  background: @table-bg-accent;
+}
 .public_fixedDataTable_footer .public_fixedDataTableCell_main {
   background-color: @state-info-bg; border-color: @state-info-border; color: @state-info-text;
 }

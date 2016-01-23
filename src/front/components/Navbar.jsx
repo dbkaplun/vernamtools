@@ -7,7 +7,7 @@ export default React.createClass({
   contextTypes: contextTypes,
   render () {
     return (
-      <nav className="navbar navbar-default">
+      <nav className="navbar navbar-default navbar-static-top">
         <div className="container">
           <div className="navbar-header">
             {/*<button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
@@ -20,9 +20,9 @@ export default React.createClass({
           </div>
 
           <div className="navbar-collapse" id="navbar-collapse">
-            <div className="navbar-right">
+            {/*<div className="navbar-right">
               <Link to="/settings" className="btn btn-danger navbar-btn btn-sm">Settings</Link>
-            </div>
+            </div>*/}
           </div>{/*.navbar-collapse*/}
         </div>{/*.container*/}
       </nav>

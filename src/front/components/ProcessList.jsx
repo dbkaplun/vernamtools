@@ -41,7 +41,8 @@ export default React.createClass({
       filter: '',
       psInterval: moment.duration(1, 'seconds'),
       tableWidth: 940,
-      tableMaxHeight: 500
+      tableMaxHeight: 500,
+      tableMarginBottom: 15
     }
   },
   statics: {
@@ -166,7 +167,7 @@ export default React.createClass({
   onResize () {
     this.setState({
       tableWidth: this.refs.tableContainer.clientWidth,
-      tableMaxHeight: window.innerHeight - $(this.refs.tableContainer).offset().top
+      tableMaxHeight: window.innerHeight - $(this.refs.tableContainer).offset().top - this.state.tableMarginBottom
     })
   },
 
