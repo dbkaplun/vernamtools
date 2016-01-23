@@ -397,6 +397,19 @@ export default React.createClass({
               }}
               flexGrow={1}
               width={350} />
+            <Column
+              columnKey="Arguments"
+              header={HeaderCell}
+              cell={props => {
+                var p = displayPs[props.rowIndex].item
+                var args = p.ARGS.slice(p.COMM.length + 1)
+                return (
+                  <BodyCell {...props}>
+                    {args && <code>{args}</code>}
+                  </BodyCell>
+                )
+              }}
+              width={150} />
           </Table>
         </div>
       </div>
