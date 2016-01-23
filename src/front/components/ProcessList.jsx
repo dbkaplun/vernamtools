@@ -379,7 +379,7 @@ export default React.createClass({
                 <BodyCell {...props}><code>{displayPs[props.rowIndex].item[props.columnKey]}</code></BodyCell>
               )}
               flexGrow={1}
-              width={100} />
+              width={500} />
           </Table>
         </div>
       </div>
