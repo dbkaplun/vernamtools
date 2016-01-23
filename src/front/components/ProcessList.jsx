@@ -248,13 +248,13 @@ export default React.createClass({
             <button title="Tree view" type="button" className={`btn btn-success ${state.treeView ? 'active' : ''}`} onClick={this.toggleTreeView} data-toggle="tooltip">
               <span className="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span>
             </button>
-          ]).concat(!selectedPsCount ? [] : [
-            <button title={`Only show ${selectedPsCount} currently selected`} type="button" className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly} data-toggle="tooltip">
-              <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
-            </button>
           ]).concat(_.isEmpty(foldedPIDs) ? [] : [
             <button title="Unfold all processes" type="button" className="btn btn-warning" onClick={this.unfoldAll} data-toggle="tooltip">
               <span className="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+            </button>
+          ]).concat(!selectedPsCount ? [] : [
+            <button title={`Only show ${selectedPsCount} currently selected`} type="button" className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly} data-toggle="tooltip">
+              <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
             </button>
           ])}</div>
           <div className="input-group col-xs-4 pull-right">
