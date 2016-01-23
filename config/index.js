@@ -13,6 +13,7 @@ var config = _.merge({
   port: parseInt(process.env.PORT, 10) || 3370,
 
   snapshotInterval: moment.duration(1, 'seconds'),
+  fetchComm: true, // requires one extra call to ps
   maxBuffer: 1000*1024 // increase if you are getting "stdout maxBuffer exceeded." errors
 }, local)
 

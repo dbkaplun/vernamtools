@@ -69,10 +69,20 @@ class WebtopServer {
       .done()
   }
 
-  static get psCmd () { return 'ps -Eeo pid,ppid,pcpu,pmem,user,args' }
-
   ps () {
-    return execAsync(this.constructor.psCmd, {maxBuffer: this.opts.maxBuffer})
+    return Promise.all([
+      this._ps(['pid', 'ppid', 'pcpu', 'pmem', 'user', 'args']),
+      this.opts.fetchComm ? this._ps(['pid', 'comm']) : []
+    ]).then(ress => _(ress)
+      .flatten()
+      .groupBy('PID')
+      .mapValues(pidGroup => _.merge.apply(null, [{}].concat(pidGroup)))
+      .values()
+      .value())
+  }
+
+  _ps (args) {
+    return execAsync(`ps -Eeo ${args.join(',')}`, {maxBuffer: this.opts.maxBuffer})
       .then(stdout => parseColumns(stdout, {transform: (el, header) => {
         if (numericPsCols[header]) el = Number(el)
         return el
