@@ -1,5 +1,5 @@
 import React from 'react'
-import {Router, Route} from 'react-router'
+import {Router, Route, Redirect} from 'react-router'
 
 import Promise from 'bluebird'
 import createHashHistory from 'history/lib/createHashHistory'
@@ -75,7 +75,8 @@ export default React.createClass({
             </p>
           </div>
           <Router history={this.history}>
-            <Route path="/" component={ProcessList} />
+            <Redirect from="/" to="/ps" />
+            <Route path="/ps" component={ProcessList} />
             <Route path="/settings" component={Settings} />
           </Router>
         </main>
