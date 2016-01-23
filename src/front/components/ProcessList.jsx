@@ -67,16 +67,16 @@ export default React.createClass({
     })
 
     // now we filter and sort a complete displayPs
-    state.visiblePIDs = {}
+    var visiblePIDs = state.visiblePIDs = {}
     displayPs = displayPs.filter(dp => {
       var isVisible = [dp].concat(state.treeView ? dp.parents : []).some(dpAncestor => (
         _.some(dpAncestor.item, val => (
           val.toString().toLowerCase().indexOf(state.filter.toLowerCase()) !== -1
-        ))
+        )) &&
+        (!state.showSelectedOnly || selectedPIDs[dpAncestor.item.PID])
       )) &&
-      (!state.showSelectedOnly || selectedPIDs[dp.item.PID]) &&
-      (!state.treeView || dp.parents.every(parent => !state.foldedPIDs[parent.item.PID]))
-      if (isVisible) state.visiblePIDs[dp.item.PID] = true
+      (!state.treeView || dp.parents.every(parent => !foldedPIDs[parent.item.PID]))
+      if (isVisible) visiblePIDs[dp.item.PID] = true
       return isVisible
     })
 
@@ -148,6 +148,9 @@ export default React.createClass({
   },
   toggleShowSelectedOnly () {
     this.setState({showSelectedOnly: !this.state.showSelectedOnly})
+  },
+  unfoldAll () {
+    this.setState({foldedPIDs: {}})
   },
   setFilter (evt) {
     this.setState({filter: evt.target.value})
@@ -230,6 +233,7 @@ export default React.createClass({
   render () {
     var state = this.state
     var ps = state.ps
+    var foldedPIDs = state.foldedPIDs
     var selectedPIDs = state.selectedPIDs
     var selectedPsCount = _.size(selectedPIDs)
     var displayPs = state.displayPs
@@ -239,20 +243,21 @@ export default React.createClass({
     const SumFooterCell = this.renderSumFooterCell
     return (
       <div ref="root">
-        <div className="btn-toolbar media-heading" role="toolbar" aria-label="...">
-          <div className="btn-group media-left" role="group" aria-label="...">
+        <div className="clearfix media-heading">
+          <div className="btn-group pull-left" role="group" aria-label="...">{[].concat([
             <button title="Tree view" type="button" className={`btn btn-success ${state.treeView ? 'active' : ''}`} onClick={this.toggleTreeView} data-toggle="tooltip">
-              <span className="glyphicon glyphicon-tree-deciduous" aria-hidden="true"></span>
+              <span className="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span>
             </button>
-            <span data-toggle="tooltip" title={selectedPsCount
-              ? `Only show ${selectedPsCount} selected`
-              : "No items selected"}>
-              <button type="button" disabled={!selectedPsCount} className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly}>
-                <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
-              </button>
-            </span>
-          </div>
-          <div className="input-group col-xs-4">
+          ]).concat(!selectedPsCount ? [] : [
+            <button title={`Only show ${selectedPsCount} currently selected`} type="button" className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly} data-toggle="tooltip">
+              <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
+            </button>
+          ]).concat(_.isEmpty(foldedPIDs) ? [] : [
+            <button title="Unfold all processes" type="button" className="btn btn-warning" onClick={this.unfoldAll} data-toggle="tooltip">
+              <span className="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+            </button>
+          ])}</div>
+          <div className="input-group col-xs-4 pull-right">
             <span className="input-group-addon"><span className="glyphicon glyphicon-search" aria-hidden="true"></span></span>
             <input placeholder="Filter processes..." type="text" className="form-control" value={state.filter} onChange={this.setFilter} aria-label="Filter processes" />
           </div>
@@ -344,7 +349,7 @@ export default React.createClass({
                         })}
                         <TreeLevel dp={dp}>
                           {dp.children.length
-                            ? state.foldedPIDs[dp.item.PID]
+                            ? foldedPIDs[dp.item.PID]
                               ? '┭'
                               : '┱'
                             : ''}
