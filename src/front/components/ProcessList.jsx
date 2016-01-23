@@ -384,7 +384,7 @@ export default React.createClass({
               columnKey="Command"
               header={HeaderCell}
               cell={props => {
-                var comm = displayPs[props.rowIndex].item.COMM
+                var comm = displayPs[props.rowIndex].item.COMM || ''
                 var cmd = _.last(comm.split(path.sep))
                 var cmdPath = comm.slice(0, -cmd.length)
                 return (
@@ -401,7 +401,7 @@ export default React.createClass({
               header={HeaderCell}
               cell={props => {
                 var p = displayPs[props.rowIndex].item
-                var args = p.ARGS.slice(p.COMM.length + 1)
+                var args = (p.ARGS || '').slice((p.COMM || '').length + 1)
                 return (
                   <BodyCell {...props}>
                     {args && <code>{args}</code>}
