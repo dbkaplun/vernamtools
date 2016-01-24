@@ -264,11 +264,11 @@ export default React.createClass({
               <span className="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span>
             </button>
           ]).concat(_.isEmpty(foldedPIDs) ? [] : [
-            <button title="Unfold all processes" type="button" className="btn btn-warning" onClick={this.unfoldAll} data-toggle="tooltip" key="btn-group-3">
+            <button title="Unfold all processes" type="button" className="btn btn-default" onClick={this.unfoldAll} data-toggle="tooltip" key="btn-group-3">
               <span className="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
             </button>
           ]).concat(!selectedPsCount ? [] : [
-            <button title={`Only show ${selectedPsCount} currently selected`} type="button" className={`btn btn-default ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly} data-toggle="tooltip" key="btn-group-4">
+            <button title={`Only show ${selectedPsCount} currently selected`} type="button" className={`btn btn-warning ${state.showSelectedOnly ? 'active' : ''}`} onClick={this.toggleShowSelectedOnly} data-toggle="tooltip" key="btn-group-4">
               <span className="glyphicon glyphicon-check" aria-hidden="true"></span>
             </button>
           ])}</div>
