@@ -284,7 +284,7 @@ export default React.createClass({
             headerHeight={50}
             footerHeight={_.isEmpty(selectedPIDs) ? 0 : 50}
             rowsCount={displayPs.length}
-            rowHeight={35 /* FIXME: duplicated in ../index.less */}>
+            rowHeight={36 /* FIXME: duplicated in ../less/tables.less */}>
             <Column
               fixed={true}
               columnKey="✓"
