@@ -9,7 +9,6 @@ import ProcessList from './ProcessList.jsx'
 import Settings from './Settings.jsx'
 
 import contextTypes from './contextTypes'
-import config from '../../../config'
 
 export default React.createClass({
   childContextTypes: contextTypes,

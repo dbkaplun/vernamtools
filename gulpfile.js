@@ -72,8 +72,8 @@ gulp.task('build-html', ['build-js', 'build-css', 'build-fonts'], () => {
 })
 gulp.task('build', ['build-html'])
 
-gulp.task('before-watch', () => { watching = true })
-gulp.task('watch', ['before-watch', 'build'], () => {
+gulp.task('pre-watch', () => { watching = true })
+gulp.task('watch', ['pre-watch', 'build'], () => {
   b.on('update', bundle)
   gulp.watch('**/*.less', ['build-css'])
   gulp.watch('**/*.html', ['build-html'])
@@ -83,5 +83,7 @@ gulp.task('serve', () => {
   new WebtopServer(config).main()
 })
 
-gulp.task('dev', ['watch', 'serve'])
+gulp.task('set-debug', () => { config.debug = true })
+gulp.task('pre-dev', ['set-debug', 'watch'])
+gulp.task('dev', ['pre-dev', 'serve'])
 gulp.task('default', ['serve'])

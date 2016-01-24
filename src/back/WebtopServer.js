@@ -30,7 +30,7 @@ class WebtopServer {
       this.ps().then(ps => { res.json(ps) }).done()
     })
     app.post('/api/kill/:ps', (req, res) => {
-      req.params.ps
+      if (!this.opts.debug) req.params.ps
         .split(/\s*,\s*/)
         .forEach(pid => { process.kill(pid, req.query.signal) })
       res.json(true)
@@ -70,15 +70,22 @@ class WebtopServer {
   }
 
   ps () {
-    return Promise.all([
-      this._ps(['pid', 'ppid', 'pcpu', 'pmem', 'user', 'args']),
-      this.opts.fetchComm ? this._ps(['pid', 'comm']) : []
-    ]).then(ress => _(ress)
-      .flatten()
-      .groupBy('PID')
-      .mapValues(pidGroup => _.merge.apply(null, [{}].concat(pidGroup)))
-      .values()
-      .value())
+    var colsObj = _(this.opts.psColumns).object().set('pid', true).value()
+    if (this.opts.debug) delete colsObj.args // environment variables are insecure
+    var psCalls = []
+    if ('args' in colsObj && 'comm' in colsObj) {
+      psCalls.push(['pid', 'args'])
+      delete colsObj.args
+    }
+    psCalls.push(_.keys(colsObj))
+    return Promise
+      .all(psCalls.map(args => this._ps(args)))
+      .then(ress => _(ress)
+        .flatten()
+        .groupBy('PID')
+        .mapValues(pidGroup => _.merge.apply(null, [{}].concat(pidGroup)))
+        .values()
+        .value())
   }
 
   _ps (args) {
