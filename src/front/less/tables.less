@@ -1,5 +1,7 @@
 @import (less) "node_modules/fixed-data-table/dist/fixed-data-table.css";
 
+@ps-table-row-height: 36px; // FIXME: duplicated in components/ProcessList.jsx
+
 // fixed-data-table style overrides
 .public_fixedDataTable_main { border-radius: @border-radius-base; }
 .public_fixedDataTable_header { &, & .public_fixedDataTableCell_main { background: @table-bg-accent; } }
@@ -16,27 +18,28 @@
 .public_fixedDataTableCell_main { &:hover { overflow: visible; } }
 .fixedDataTableRowLayout_rowWrapper,
 .public_fixedDataTableCell_main { &:hover { z-index: 1 !important; } }
-.public_fixedDataTableCell_cellContent:hover {
-  margin-right: 1px;
-  .public_fixedDataTable_bodyRow & { .state('warning'); }
-  .public_fixedDataTable_footer & { .state('info'); }
-}
 .public_fixedDataTableCell_wrap1:hover {
   .public_fixedDataTable_hasBottomBorder & { position: absolute; bottom: 0; }
   .public_fixedDataTable_footer & { position: absolute; bottom: -1px; }
 }
+.public_fixedDataTableCell_cellContent:hover {
+  min-height: @ps-table-row-height;
+  margin-right: 1px;
+  .public_fixedDataTable_bodyRow & { .state('warning'); }
+  .public_fixedDataTable_footer & { .state('info'); }
+}
 // FIXME: scrollable cell :hover bleed on fixed cells, something like `.fixedDataTableRowLayout_body > :first-child { z-index: 1000 !important; }`
 // FIXME: header/footer shadow bleeds over footer cell :hover
-// FIXME: .column-Actions-body-cell:hover bleeds on bottom
 // FIXME: .public_fixedDataTable_hasBottomBorder border disappears on :hover
 
 // custom styles
 .sort-header-cell { cursor: pointer; }
 
-@ps-table-row-height: 36px; // FIXME: duplicated in components/ProcessList.jsx
-
 .column-Tree-body-cell {
   font-family: @font-family-monospace; white-space: pre; text-overflow: clip; cursor: default;
   line-height: @ps-table-row-height; font-size: @ps-table-row-height / 1.2;
   .public_fixedDataTableCell_cellContent { padding-top: 0; padding-bottom: 0; }
+}
+.fixedDataTableRowLayout_body > :first-child {
+  .public_fixedDataTableCell_cellContent { height: @ps-table-row-height; } // FIXME: hack to ensure fixed cells never bleed on :hover
 }
