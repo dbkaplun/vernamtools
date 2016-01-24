@@ -26,10 +26,9 @@
   .public_fixedDataTable_footer & { position: absolute; bottom: -1px; }
 }
 // FIXME: scrollable cell :hover bleed on fixed cells, something like `.fixedDataTableRowLayout_body > :first-child { z-index: 1000 !important; }`
-// FIXME: rightmost cell :hover overflow
-// FIXME: footer :hover shadow bleed
-// FIXME: .column-Actions-body-cell:hover bleed
-// FIXME: .public_fixedDataTable_hasBottomBorder:hover border disappearing
+// FIXME: header/footer shadow bleeds over footer cell :hover
+// FIXME: .column-Actions-body-cell:hover bleeds on bottom
+// FIXME: .public_fixedDataTable_hasBottomBorder border disappears on :hover
 
 // custom styles
 .sort-header-cell { cursor: pointer; }
