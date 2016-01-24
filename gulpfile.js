@@ -56,7 +56,7 @@ gulp.task('build-fonts', () => {
     .pipe(gulp.dest(path.join(dist, 'fonts')))
 })
 gulp.task('build-css', () => {
-  return gulp.src(src+'index.less')
+  return gulp.src(src+'less/index.less')
     .pipe(sourcemaps.init())
       // Add transformation tasks to the pipeline here
       .pipe(less())

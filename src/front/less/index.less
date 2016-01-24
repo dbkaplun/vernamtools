@@ -1,0 +1,14 @@
+@import "node_modules/bootstrap/less/bootstrap.less";
+@import "node_modules/bootswatch/spacelab/bootswatch.less";
+@import "node_modules/bootswatch/spacelab/variables.less";
+@icon-font-path: "fonts/";
+@dl-horizontal-breakpoint: 0;
+@dl-horizontal-offset: 1.5em;
+.dl-horizontal dt { width: auto; }
+.state(@type) {
+  @state-type-text: "state-@{type}-text"; color: @@state-type-text;
+  @state-type-bg: "state-@{type}-bg"; background-color: @@state-type-bg;
+  @state-type-border: "state-@{type}-border"; background-color: @@state-type-border;
+}
+
+@import "./tables.less";

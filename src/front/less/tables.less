@@ -1,0 +1,33 @@
+@import (less) "node_modules/fixed-data-table/dist/fixed-data-table.css";
+
+// fixed-data-table style overrides
+.public_fixedDataTable_main { border-radius: @border-radius-base; }
+.public_fixedDataTable_header { &, & .public_fixedDataTableCell_main { background: @table-bg-accent; } }
+.public_fixedDataTable_footer .public_fixedDataTableCell_main { .state('info'); }
+.fixedDataTableCellGroupLayout_cellGroup .public_fixedDataTableCell_main { white-space: nowrap; text-overflow: ellipsis; } // FIXME: text-overflow
+
+// table hovering logic
+.public_fixedDataTable_bodyRow,
+.public_fixedDataTable_footer,
+.fixedDataTableCellGroupLayout_cellGroup,
+.public_fixedDataTableCell_main { &:hover { overflow: visible; white-space: normal; } }
+.fixedDataTableRowLayout_rowWrapper,
+.public_fixedDataTableCell_main { &:hover { z-index: 1 !important; } }
+.public_fixedDataTableCell_cellContent:hover {
+  .public_fixedDataTable_bodyRow & { .state('warning'); }
+  .public_fixedDataTable_footer & { .state('info'); }
+}
+.public_fixedDataTable_footer .public_fixedDataTableCell_wrap1:hover { bottom: -1px; position: absolute; }
+// FIXME: rightmost cell :hover overflow
+// FIXME: footer :hover shadow bleed
+
+// custom styles
+.sort-header-cell { cursor: pointer; }
+
+@ps-table-row-height: 35px; // FIXME: duplicated in components/ProcessList.jsx
+
+.column-Tree-body-cell {
+  font-family: @font-family-monospace; white-space: pre; text-overflow: clip; cursor: default;
+  line-height: @ps-table-row-height; font-size: @ps-table-row-height / 1.2;
+  .public_fixedDataTableCell_cellContent { padding-top: 0; padding-bottom: 0; }
+}
