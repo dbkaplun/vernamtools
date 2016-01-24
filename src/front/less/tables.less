@@ -14,11 +14,14 @@
 .fixedDataTableRowLayout_rowWrapper,
 .public_fixedDataTableCell_main { &:hover { z-index: 1 !important; } }
 .public_fixedDataTableCell_cellContent:hover {
+  margin-right: 1px;
   .public_fixedDataTable_bodyRow & { .state('warning'); }
   .public_fixedDataTable_footer & { .state('info'); }
 }
-.public_fixedDataTableCell_wrap1:hover { border-right: 1px solid transparent; }
-.public_fixedDataTable_footer .public_fixedDataTableCell_wrap1:hover { bottom: -1px; position: absolute; }
+.public_fixedDataTableCell_wrap1:hover {
+  .last-row & { position: absolute; bottom: 0; }
+  .public_fixedDataTable_footer & { position: absolute; bottom: -1px; }
+}
 // FIXME: scrollable cell :hover bleed on fixed cells, something like `.fixedDataTableRowLayout_body > :first-child { z-index: 1000 !important; }`
 // FIXME: rightmost cell :hover overflow
 // FIXME: footer :hover shadow bleed

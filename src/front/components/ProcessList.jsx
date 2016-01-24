@@ -241,6 +241,9 @@ export default React.createClass({
       <Cell {...props}>{this.sumSelected(props.columnKey, asType)}</Cell>
     )
   },
+  rowClassNameGetter (i) {
+    return i === this.state.displayPs.length - 1 ? 'last-row' : ''
+  },
   render () {
     var state = this.state
     var ps = state.ps
@@ -284,7 +287,8 @@ export default React.createClass({
             headerHeight={50}
             footerHeight={_.isEmpty(selectedPIDs) ? 0 : 50}
             rowsCount={displayPs.length}
-            rowHeight={36 /* FIXME: duplicated in ../less/tables.less */}>
+            rowHeight={36 /* FIXME: duplicated in ../less/tables.less */}
+            rowClassNameGetter={this.rowClassNameGetter}>
             <Column
               fixed={true}
               columnKey="✓"
