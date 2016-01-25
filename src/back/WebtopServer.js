@@ -26,26 +26,26 @@ class WebtopServer {
   initApp () {
     var app = this.app = express()
 
-    app.get('/api/ps', (req, res) => {
-      this.ps().then(ps => { res.json(ps) }).done()
-    })
-    app.post('/api/kill/:ps', (req, res) => {
-      if (!this.opts.debug) req.params.ps
-        .split(/\s*,\s*/)
-        .forEach(pid => { process.kill(pid, req.query.signal) })
-      res.json(true)
-    })
-    app.use(express.static(path.resolve(__dirname, '..', '..', 'dist')))
-
-    app.use(methodOverride())
+    app.use(methodOverride(null, {methods: ['GET', 'POST']}))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({
       extended: true
     }))
-    app.use(errorHandler({
+    if (this.opts.debug) app.use(errorHandler({
       dumpExceptions: true,
       showStack: true
     }))
+
+    app.get('/api/ps', (req, res) => {
+      this.ps().then(ps => { res.json(ps) }).done()
+    })
+    app.post('/api/kill', (req, res) => {
+      if (!this.opts.debug) req.param('pids', '')
+        .split(/\s*,\s*/)
+        .forEach(pid => { process.kill(pid, req.param('signal')) })
+      res.json(true)
+    })
+    app.use(express.static(path.resolve(__dirname, '..', '..', 'dist')))
   }
 
   listen () {
@@ -71,7 +71,6 @@ class WebtopServer {
 
   ps () {
     var colsObj = _(this.opts.psColumns).object().set('pid', true).value()
-    if (this.opts.debug) delete colsObj.args // environment variables are insecure
     var psCalls = []
     if ('args' in colsObj && 'comm' in colsObj) {
       psCalls.push(['pid', 'args'])
@@ -83,7 +82,16 @@ class WebtopServer {
       .then(ress => _(ress)
         .flatten()
         .groupBy('PID')
-        .mapValues(pidGroup => _.merge.apply(null, [{}].concat(pidGroup)))
+        .mapValues(pidGroup => {
+          var p = _.merge.apply(null, [{}].concat(pidGroup))
+          if (this.opts.debug && 'ARGS' in p) p.ARGS = ['COMM' in p // replace potentially insecure environment variables and cmdline params in p.ARGS
+            ? p.COMM.replace(/^\((.*)\)$/, '$1')
+            : p.ARGS.replace(/\s.*$/, '')
+          ]
+            .concat(this.constructor.FAKE_ARGS.filter(() => Math.random() < .1))
+            .join(' ')
+          return p
+        })
         .values()
         .value())
   }
@@ -96,6 +104,7 @@ class WebtopServer {
       }}))
   }
 }
+WebtopServer.FAKE_ARGS = ['-x', '-y', '--foo', '--bar=2', 'BAZ=123', '__BEEP_BOOP=80085']
 
 module.exports = WebtopServer
 

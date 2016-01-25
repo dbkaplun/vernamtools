@@ -110,13 +110,13 @@ export default React.createClass({
     $(window).off('resize', this.onResize)
   },
   pollPS () {
-    $.get('/api/ps')
+    $.ajax({method: 'GET', url: 'api/ps', dataType: 'json'})
       .done(ps => { this.setState({ps}) })
       .fail(this.handleJQueryAjaxFail)
     this.state.psTimeoutRef = setTimeout(this.pollPS, +this.state.psInterval)
   },
   kill (pids) {
-    $.post(`/api/kill/${pids.join(',')}`)
+    $.ajax({method: 'GET', url: 'api/kill', data: {pids: pids.join(',')}, headers: {'X-HTTP-Method-Override': 'POST'}, dataType: 'json'})
       .done(success => {
         if (!success) throw new Error("Something went wrong")
         this.context.app.alertFromError({className: 'alert-success', message: `killed ${pids.length} process${pids.length === 1 ? "" : "es"}`})
