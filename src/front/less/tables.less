@@ -21,12 +21,7 @@
 .public_fixedDataTable_bodyRow {
   .public_fixedDataTableCell_wrap1,
   .public_fixedDataTableCell_wrap2,
-  .public_fixedDataTableCell_wrap3 { display: block; }
-  .fixedDataTableRowLayout_body > :not(:first-child) {
-    .public_fixedDataTableCell_wrap1:hover { display: table; }
-    .public_fixedDataTableCell_wrap2:hover { display: table-row; }
-    .public_fixedDataTableCell_wrap3:hover { display: table-cell; }
-  }
+  .public_fixedDataTableCell_wrap3 { &:not(:hover) { display: block; } }
 }
 .public_fixedDataTableCell_wrap1:hover {
   .public_fixedDataTable_hasBottomBorder & { position: absolute; bottom: 0; }
