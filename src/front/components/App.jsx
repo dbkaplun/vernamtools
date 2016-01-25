@@ -58,6 +58,12 @@ export default React.createClass({
               {invisibleAlerts} alert{invisibleAlerts === 1 ? '' : 's'} not shown
             </p>
           </div>
+          {!window.location.hostname.match(/github\.io$/) ? '' : (
+            <p className="help-block">
+              NOTE: this is a static demo and as such the data won't update and you can't kill processes.
+              Please see <a href="https://github.com/dbkaplun/webtop" target="_blank">the project page</a> for install instructions!
+            </p>
+          )}
           {this.props.children}
         </main>
       </div>
