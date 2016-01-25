@@ -22,9 +22,11 @@
   .public_fixedDataTableCell_wrap1,
   .public_fixedDataTableCell_wrap2,
   .public_fixedDataTableCell_wrap3 { display: block; }
-  .public_fixedDataTableCell_wrap1:hover { display: table; }
-  .public_fixedDataTableCell_wrap2:hover { display: table-row; }
-  .public_fixedDataTableCell_wrap3:hover { display: table-cell; }
+  .fixedDataTableRowLayout_body > :not(:first-child) {
+    .public_fixedDataTableCell_wrap1:hover { display: table; }
+    .public_fixedDataTableCell_wrap2:hover { display: table-row; }
+    .public_fixedDataTableCell_wrap3:hover { display: table-cell; }
+  }
 }
 .public_fixedDataTableCell_wrap1:hover {
   .public_fixedDataTable_hasBottomBorder & { position: absolute; bottom: 0; }
@@ -34,6 +36,7 @@
   min-height: @ps-table-row-height;
   margin-right: 1px;
   overflow: hidden; text-overflow: ellipsis;
+  .public_fixedDataTableCell_main:first-child & { margin-left: -1px; }
   &:hover {
     .public_fixedDataTable_bodyRow & { .state('warning'); }
     .public_fixedDataTable_footer & { .state('info'); }
