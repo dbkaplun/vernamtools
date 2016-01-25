@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {Router, Route} from 'react-router'
 import $ from 'jquery'; window.jQuery = $
+require('bootstrap/dist/js/bootstrap')
 
 import App from './components/App.jsx'
 
