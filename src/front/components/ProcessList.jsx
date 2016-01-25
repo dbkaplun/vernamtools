@@ -1,7 +1,6 @@
 'use strict'
 
 import React from 'react'
-import {Link} from 'react-router'
 import {Table, Column, Cell} from 'fixed-data-table'
 import path from 'path'
 import _ from 'lodash'

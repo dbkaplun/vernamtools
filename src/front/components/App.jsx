@@ -1,31 +1,16 @@
 import React from 'react'
-import {Router, Route, Redirect} from 'react-router'
-
-import Promise from 'bluebird'
-import createHashHistory from 'history/lib/createHashHistory'
+import _ from 'lodash'
 
 import Navbar from './Navbar.jsx'
-import ProcessList from './ProcessList.jsx'
-import Settings from './Settings.jsx'
-
 import contextTypes from './contextTypes'
 
 export default React.createClass({
-  childContextTypes: contextTypes,
+  childContextTypes: _.pick(contextTypes, 'app'),
+  getChildContext () { return {app: this} },
   getInitialState () {
     return {
       alerts: [],
       maxVisibleAlertCount: 5
-    }
-  },
-  componentWillMount () {
-    var self = this
-    self.history = createHashHistory()
-  },
-  getChildContext () {
-    return {
-      app: this,
-      history: this.history
     }
   },
 
@@ -73,11 +58,7 @@ export default React.createClass({
               {invisibleAlerts} alert{invisibleAlerts === 1 ? '' : 's'} not shown
             </p>
           </div>
-          <Router history={this.history}>
-            <Redirect from="/" to="/ps" />
-            <Route path="/ps" component={ProcessList} />
-            <Route path="/settings" component={Settings} />
-          </Router>
+          {this.props.children}
         </main>
       </div>
     )

@@ -1,8 +1,6 @@
 import React from 'react'
-import {Link} from 'react-router'
 
-import _ from 'lodash'
-
+import WebtopLink from './WebtopLink.jsx'
 import contextTypes from './contextTypes'
 
 export default React.createClass({
@@ -14,7 +12,7 @@ export default React.createClass({
           <h2>
             Settings
             <span className="pull-right">
-              <Link to="/" className="btn btn-primary">Home &raquo;</Link>
+              <WebtopLink to="/" className="btn btn-primary" index={true}>Home &raquo;</WebtopLink>
             </span>
           </h2>
         </div>

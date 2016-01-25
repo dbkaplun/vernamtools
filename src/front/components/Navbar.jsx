@@ -1,6 +1,6 @@
 import React from 'react'
-import {Link} from 'react-router'
 
+import WebtopLink from './WebtopLink.jsx'
 import contextTypes from './contextTypes'
 
 export default React.createClass({
@@ -16,13 +16,16 @@ export default React.createClass({
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>*/}
-            <a className="navbar-brand" href="#">webtop</a>
+            <WebtopLink to="/" title="Go to main page" className="navbar-brand" data-toggle="tooltip" data-placement="bottom">webtop</WebtopLink>
           </div>
 
           <div className="navbar-collapse" id="navbar-collapse">
-            {/*<div className="navbar-right">
-              <Link to="/settings" className="btn btn-danger navbar-btn btn-sm">Settings</Link>
-            </div>*/}
+            <ul className="nav navbar-nav">
+              <li><a href="https://github.com/dbkaplun/webtop" target="_blank" title="★, source, issues" data-toggle="tooltip" data-placement="bottom">Github</a></li>
+            </ul>
+            {/*<ul className="nav navbar-nav navbar-right">
+              <li><WebtopLink to="/settings" className="btn btn-danger navbar-btn btn-sm">Settings</WebtopLink></li>
+            </ul>*/}
           </div>{/*.navbar-collapse*/}
         </div>{/*.container*/}
       </nav>
