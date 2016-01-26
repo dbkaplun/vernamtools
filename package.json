@@ -47,6 +47,7 @@
     "gulp-uglify": "^1.4.2",
     "gulp-uncss": "1.0.4",
     "gulp-util": "^3.0.7",
+    "history": "1.13.1",
     "jquery": "2.1.4",
     "react": "0.14.3",
     "react-dom": "0.14.3",
@@ -55,10 +56,6 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.6.0"
-  },
-  "peerDependencies": {
-    "browserify-shim": "*",
-    "history": "1.13.1"
   },
   "author": "Dan Kaplun <dbkaplun@gmail.com>",
   "license": "MIT"
