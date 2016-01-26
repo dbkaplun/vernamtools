@@ -35,6 +35,7 @@ export default React.createClass({
   },
 
   handleJQueryAjaxFail (err) {
+    if (err.statusText === 'abort') return // AJAX was cancelled, not an error case
     this.alertFromError(_.merge(err, {message: err.message || "Failed to fetch"}))
   },
 
