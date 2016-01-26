@@ -1,3 +1,5 @@
 module.exports = {
-  'PID': 'number'
+  'PID': 'number',
+  'srcPort': 'number',
+  'dstPort': 'number'
 }

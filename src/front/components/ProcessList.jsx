@@ -9,6 +9,7 @@ import moment from 'moment'
 import unsplay from 'unsplay'
 
 import contextTypes from './contextTypes'
+import getSortCmp from './getSortCmp'
 import psCols from '../../psCols'
 import arrayToObjectKeys from '../../arrayToObjectKeys'
 import splayDepthFirst from '../../splayDepthFirst'
@@ -50,8 +51,6 @@ export default React.createClass({
     $(window).resize(this.onResize); this.onResize()
   },
   componentWillUpdate (props, state) {
-    var sort = state.sort
-
     // begin displayPs computation
     var displayPs = state.treeView
       ? splayDepthFirst(unsplay(state.ps, 'PID', 'PPID'))
@@ -80,14 +79,9 @@ export default React.createClass({
       return isVisible
     })
 
-    if (!state.treeView) displayPs.sort((dpA, dpB) => {
-      var aVal = dpA.item[sort.columnKey]
-      var bVal = dpB.item[sort.columnKey]
-      var cmp = psCols[sort.columnKey] === 'number'
-        ? Math.sign(aVal - bVal)
-        : (aVal || '').toString().localeCompare(bVal || '')
-      return cmp * (sort.sortDir === SortHeader.SortTypes.DESC ? 1 : -1)
-    })
+    var sort = state.sort
+    var columnKey = sort.columnKey
+    if (!state.treeView) displayPs.sort(getSortCmp(_.merge({}, sort, {columnKey: `item[${JSON.stringify(columnKey)}]`}), psCols[columnKey]))
 
     state.displayPs = displayPs
     // end displayPs computation

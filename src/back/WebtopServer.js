@@ -109,7 +109,7 @@ class WebtopServer {
         .value())
   }
 
-  lsoi () { return this.execTable('lsof -i', lsoiTransform) }
+  lsoi () { return this.execTable('lsof -i -P', lsoiTransform) }
   lsoh () { return this.lsoi() }
 
   execTable (cmd, transform) {

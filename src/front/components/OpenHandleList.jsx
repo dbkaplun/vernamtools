@@ -7,6 +7,7 @@ import $ from 'jquery'
 import moment from 'moment'
 
 import contextTypes from './contextTypes'
+import getSortCmp from './getSortCmp'
 import lsoiCols from '../../lsoiCols'
 
 import SortHeader from './SortHeader.jsx'
@@ -39,8 +40,6 @@ export default React.createClass({
     $(window).resize(this.onResize); this.onResize()
   },
   componentWillUpdate (props, state) {
-    var sort = state.sort
-
     // begin displayHs computation
     var displayHs = state.hs.map(h => {
       let dh = {item: h}
@@ -62,17 +61,11 @@ export default React.createClass({
       ))
     ))
 
+    var sort = state.sort
     var rawCol = sort.columnKey
     var match = rawCol.match(/^item\[(.*)\]$/)
     if (match) rawCol = JSON.parse(match[1])
-    displayHs.sort((dhA, dhB) => {
-      var aVal = _.get(dhA, sort.columnKey)
-      var bVal = _.get(dhB, sort.columnKey)
-      var cmp = lsoiCols[rawCol] === 'number'
-        ? Math.sign(aVal - bVal)
-        : (aVal || '').toString().localeCompare(bVal || '')
-      return cmp * (sort.sortDir === SortHeader.SortTypes.DESC ? 1 : -1)
-    })
+    displayHs.sort(getSortCmp(sort, lsoiCols[rawCol]))
 
     state.displayHs = displayHs
     // end displayHs computation
@@ -209,17 +202,17 @@ export default React.createClass({
               columnKey="TYPE"
               header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={60} />
+              width={70} />
             <Column
               columnKey="NODE"
               header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={60} />
+              width={70} />
             <Column
               columnKey="COMMAND"
               header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={110} />
             <Column
               columnKey="USER"
               header={ItemSortHeaderCell}
@@ -239,7 +232,7 @@ export default React.createClass({
               columnKey="SIZE/OFF"
               header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={80} />
+              width={90} />
           </Table>
         </div>
       </div>
