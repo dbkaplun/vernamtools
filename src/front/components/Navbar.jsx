@@ -16,16 +16,20 @@ export default React.createClass({
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>*/}
-            <WebtopLink to="/" title="Go to main page" className="navbar-brand" data-toggle="tooltip" data-placement="bottom">webtop</WebtopLink>
+            <span className="navbar-brand">webtop</span>
           </div>
 
           <div className="navbar-collapse" id="navbar-collapse">
-            <ul className="nav navbar-nav">
-              <li><a href="https://github.com/dbkaplun/webtop" target="_blank" title="★, source, issues" data-toggle="tooltip" data-placement="bottom">Github</a></li>
+            {/*<ul className="nav navbar-nav">
+              <WebtopLink to="/ps" tag="li">Processes</WebtopLink>
+              <WebtopLink to="/lsoh" tag="li">Handles</WebtopLink>*/}
+              {/*<li><WebtopLink to="/settings" className="btn btn-danger navbar-btn btn-sm">Settings</WebtopLink></li>*/}
+            {/*</ul>*/}
+            <ul className="nav navbar-nav navbar-right">
+              <li><a href="https://github.com/dbkaplun/webtop" title="★, source, issues" target="_blank" data-toggle="tooltip" data-placement="bottom">
+                Github
+              </a></li>
             </ul>
-            {/*<ul className="nav navbar-nav navbar-right">
-              <li><WebtopLink to="/settings" className="btn btn-danger navbar-btn btn-sm">Settings</WebtopLink></li>
-            </ul>*/}
           </div>{/*.navbar-collapse*/}
         </div>{/*.container*/}
       </nav>

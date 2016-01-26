@@ -23,7 +23,7 @@ export default React.createClass({
   render () {
     var {sortDir, children, ...props} = this.props
     return (
-      <span {...props} className="sort-header-cell" onClick={this._onSortChange}>
+      <span {...props} className="sort-header" onClick={this._onSortChange}>
         {children} {sortDir ? (sortDir === this.constructor.SortTypes.DESC ? '↓' : '↑') : ''}
       </span>
     )

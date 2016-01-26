@@ -34,6 +34,10 @@ export default React.createClass({
     this.setState({alerts})
   },
 
+  handleJQueryAjaxFail (err) {
+    this.alertFromError(_.merge(err, {message: err.message || "Failed to fetch"}))
+  },
+
   render () {
     var state = this.state
     var alerts = state.alerts

@@ -6,6 +6,7 @@ import createHashHistory from 'history/lib/createHashHistory'
 
 import App from './App.jsx'
 import ProcessList from './ProcessList.jsx'
+import OpenHandleList from './OpenHandleList.jsx'
 import Settings from './Settings.jsx'
 
 import contextTypes from './contextTypes'
@@ -23,6 +24,7 @@ export default React.createClass({
         <Route path="/" component={App}>
           <IndexRedirect to="ps" />
           <Route path="ps" component={ProcessList} />
+          <Route path="lsoh" component={OpenHandleList} />
           <Route path="settings" component={Settings} />
           {/*<Route path="*" component={NoMatch} />*/}
         </Route>

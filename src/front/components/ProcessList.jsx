@@ -12,12 +12,8 @@ import contextTypes from './contextTypes'
 import arrayToObjectKeys from '../../arrayToObjectKeys'
 import splayDepthFirst from '../../splayDepthFirst'
 
-import SortHeaderCell from './SortHeaderCell.jsx'
-const HeaderCell = ({columnKey, children, ...props}) => (
-  <Cell {...props} columnKey={columnKey} className={`column-${columnKey}-header-cell`}>
-    {children || columnKey}
-  </Cell>
-)
+import SortHeader from './SortHeader.jsx'
+import HeaderCell from './HeaderCell.jsx'
 
 export default React.createClass({
   contextTypes: contextTypes,
@@ -35,7 +31,7 @@ export default React.createClass({
       fullCommand: false,
       treeView: false,
       showSelectedOnly: false,
-      sort: {columnKey: '%CPU', sortDir: SortHeaderCell.SortTypes.ASC},
+      sort: {columnKey: '%CPU', sortDir: SortHeader.SortTypes.ASC},
       filter: '',
       psInterval: moment.duration(1, 'seconds'),
       tableWidth: 940,
@@ -50,8 +46,8 @@ export default React.createClass({
     }
   },
   componentDidMount () {
-    this.setState(_.merge({}, this.state, JSON.parse(localStorage.processList || '{}')))
-    this.pollPS()
+    this.setState(_.merge({}, this.state, JSON.parse(localStorage[this.constructor.displayName] || '{}')))
+    this.pollPs()
     $(window).resize(this.onResize); this.onResize()
   },
   componentWillUpdate (props, state) {
@@ -91,7 +87,7 @@ export default React.createClass({
       var cmp = typeof aVal === 'string'
         ? aVal.localeCompare(bVal)
         : Math.sign(aVal - bVal)
-      return cmp * (sort.sortDir === SortHeaderCell.SortTypes.DESC ? 1 : -1)
+      return cmp * (sort.sortDir === SortHeader.SortTypes.DESC ? 1 : -1)
     })
 
     state.displayPs = displayPs
@@ -100,17 +96,17 @@ export default React.createClass({
     var selectedPsCount = _.size(selectedPIDs)
     if (!selectedPsCount) state.showSelectedOnly = false
     this.refs.selectAll.indeterminate = selectedPsCount && selectedPsCount !== state.ps.length
-    localStorage.processList = JSON.stringify(_.pick(state, props.stateFilterKeys))
+    localStorage[this.constructor.displayName] = JSON.stringify(_.pick(state, props.stateFilterKeys))
   },
   componentWillUnmount () {
     clearTimeout(this.state.psTimeoutRef)
     $(window).off('resize', this.onResize)
   },
-  pollPS () {
+  pollPs () {
     $.ajax({method: 'GET', url: 'api/ps', dataType: 'json'})
       .done(ps => { this.setState({ps}) })
       .fail(this.handleJQueryAjaxFail)
-    this.state.psTimeoutRef = setTimeout(this.pollPS, +this.state.psInterval)
+    this.state.psTimeoutRef = setTimeout(this.pollPs, +this.state.psInterval)
   },
   kill (pids) {
     $.ajax({method: 'GET', url: 'api/kill', data: {pids: pids.join(',')}, headers: {'X-HTTP-Method-Override': 'POST'}, dataType: 'json'})
@@ -119,9 +115,6 @@ export default React.createClass({
         this.context.app.alertFromError({className: 'alert-success', message: `killed ${pids.length} process${pids.length === 1 ? "" : "es"}`})
       })
       .fail(this.handleJQueryAjaxFail)
-  },
-  handleJQueryAjaxFail (err) {
-    this.context.app.alertFromError(_.merge(err, {message: err.message || "Failed to fetch"}))
   },
 
   sumSelected (columnKey, asType) {
@@ -198,18 +191,18 @@ export default React.createClass({
     )
   },
 
-  renderSortableHeaderCell ({columnKey, children, ...props}) {
+  renderSortHeaderCell ({columnKey, children, ...props}) {
     var state = this.state
     var sort = state.sort
     var selectedPIDs = state.selectedPIDs
     return (
       <HeaderCell {...props} columnKey={columnKey}>
-        <SortHeaderCell {...props}
+        <SortHeader {...props}
           columnKey={columnKey}
           sortDir={!state.treeView && sort.columnKey === columnKey && sort.sortDir}
           onSortChange={this.onSortChange}>
           {children || columnKey}
-        </SortHeaderCell>
+        </SortHeader>
       </HeaderCell>
     )
   },
@@ -246,7 +239,7 @@ export default React.createClass({
     var selectedPsCount = _.size(selectedPIDs)
     var displayPs = state.displayPs
     const BodyCell = this.renderBodyCell
-    const SortableHeaderCell = this.renderSortableHeaderCell
+    const SortHeaderCell = this.renderSortHeaderCell
     const ActionsCell = this.renderActionsCell
     const SumFooterCell = this.renderSumFooterCell
     return (
@@ -305,25 +298,25 @@ export default React.createClass({
               width={100} />
             <Column
               columnKey="%CPU"
-              header={SortableHeaderCell}
+              header={SortHeaderCell}
               cell={BodyCell}
               footer={SumFooterCell}
               width={100} />
             <Column
               columnKey="%MEM"
-              header={SortableHeaderCell}
+              header={SortHeaderCell}
               cell={BodyCell}
               footer={SumFooterCell}
               width={100} />
             <Column
               columnKey="USER"
-              header={SortableHeaderCell}
+              header={SortHeaderCell}
               cell={BodyCell}
               footer={SumFooterCell}
               width={100} />
             <Column
               columnKey="PID"
-              header={SortableHeaderCell}
+              header={SortHeaderCell}
               cell={BodyCell}
               footer={props => (
                 <SumFooterCell {...props} asType="string" />

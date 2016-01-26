@@ -24,6 +24,7 @@ function getTransform (cols) {
 }
 
 const psTransform = getTransform(require('../psCols'))
+const lsoiTransform = getTransform(require('../lsoiCols'))
 
 class WebtopServer {
   constructor (opts) {
@@ -46,6 +47,9 @@ class WebtopServer {
 
     app.get('/api/ps', (req, res) => {
       this.ps().then(ps => { res.json(ps) }).done()
+    })
+    app.get('/api/lsoh', (req, res) => {
+      this.lsoh().then(hs => { res.json(hs) }).done()
     })
     app.post('/api/kill', (req, res) => {
       if (!this.opts.debug) req.param('pids', '')
@@ -104,6 +108,9 @@ class WebtopServer {
         .values()
         .value())
   }
+
+  lsoi () { return this.execTable('lsof -i', lsoiTransform) }
+  lsoh () { return this.lsoi() }
 
   execTable (cmd, transform) {
     return execAsync(cmd, {maxBuffer: this.opts.maxBuffer})

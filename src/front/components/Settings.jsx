@@ -1,4 +1,5 @@
 import React from 'react'
+import {IndexLink} from 'react-router'
 
 import WebtopLink from './WebtopLink.jsx'
 import contextTypes from './contextTypes'
@@ -12,7 +13,7 @@ export default React.createClass({
           <h2>
             Settings
             <span className="pull-right">
-              <WebtopLink to="/" className="btn btn-primary" index={true}>Home &raquo;</WebtopLink>
+              <WebtopLink to="/" className="btn btn-primary" tag={IndexLink}>Home &raquo;</WebtopLink>
             </span>
           </h2>
         </div>
