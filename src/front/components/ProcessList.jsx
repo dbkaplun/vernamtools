@@ -9,6 +9,7 @@ import moment from 'moment'
 import unsplay from 'unsplay'
 
 import contextTypes from './contextTypes'
+import psCols from '../../psCols'
 import arrayToObjectKeys from '../../arrayToObjectKeys'
 import splayDepthFirst from '../../splayDepthFirst'
 
@@ -41,9 +42,7 @@ export default React.createClass({
   },
   getInitialState () { return this.constructor.initialState },
   getDefaultProps () {
-    return {
-      stateFilterKeys: ['fullCommand', 'treeView', 'sort', 'filter']
-    }
+    return {stateFilterKeys: ['fullCommand', 'treeView', 'sort', 'filter']}
   },
   componentDidMount () {
     this.setState(_.merge({}, this.state, JSON.parse(localStorage[this.constructor.displayName] || '{}')))
@@ -84,9 +83,9 @@ export default React.createClass({
     if (!state.treeView) displayPs.sort((dpA, dpB) => {
       var aVal = dpA.item[sort.columnKey]
       var bVal = dpB.item[sort.columnKey]
-      var cmp = typeof aVal === 'string'
-        ? aVal.localeCompare(bVal)
-        : Math.sign(aVal - bVal)
+      var cmp = psCols[sort.columnKey] === 'number'
+        ? Math.sign(aVal - bVal)
+        : aVal.localeCompare(bVal)
       return cmp * (sort.sortDir === SortHeader.SortTypes.DESC ? 1 : -1)
     })
 
