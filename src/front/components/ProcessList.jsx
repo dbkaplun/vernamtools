@@ -98,14 +98,15 @@ export default React.createClass({
     localStorage[this.constructor.displayName] = JSON.stringify(_.pick(state, props.stateFilterKeys))
   },
   componentWillUnmount () {
-    clearTimeout(this.state.psTimeoutRef)
+    _.result(this, 'psAjaxRef.abort')
+    clearTimeout(this.psTimeoutRef)
     $(window).off('resize', this.onResize)
   },
   pollPs () {
-    $.ajax({method: 'GET', url: 'api/ps', dataType: 'json'})
+    this.psAjaxRef = $.ajax({method: 'GET', url: 'api/ps', dataType: 'json'})
       .done(ps => { this.setState({ps}) })
-      .fail(this.handleJQueryAjaxFail)
-    this.state.psTimeoutRef = setTimeout(this.pollPs, +this.state.psInterval)
+      .fail(this.context.app.handleJQueryAjaxFail)
+    this.psTimeoutRef = setTimeout(this.pollPs, +this.state.psInterval)
   },
   kill (pids) {
     $.ajax({method: 'GET', url: 'api/kill', data: {pids: pids.join(',')}, headers: {'X-HTTP-Method-Override': 'POST'}, dataType: 'json'})
@@ -113,7 +114,7 @@ export default React.createClass({
         if (!success) throw new Error("Something went wrong")
         this.context.app.alertFromError({className: 'alert-success', message: `killed ${pids.length} process${pids.length === 1 ? "" : "es"}`})
       })
-      .fail(this.handleJQueryAjaxFail)
+      .fail(this.context.app.handleJQueryAjaxFail)
   },
 
   sumSelected (columnKey, asType) {

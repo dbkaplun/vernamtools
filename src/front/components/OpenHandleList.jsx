@@ -80,14 +80,15 @@ export default React.createClass({
     localStorage[this.constructor.displayName] = JSON.stringify(_.pick(state, props.stateFilterKeys))
   },
   componentWillUnmount () {
-    clearTimeout(this.state.hsTimeoutRef)
+    _.result(this, 'hsAjaxRef.abort')
+    clearTimeout(this.hsTimeoutRef)
     $(window).off('resize', this.onResize)
   },
   pollHs () {
-    $.ajax({method: 'GET', url: 'api/lsoh', dataType: 'json'})
+    this.hsAjaxRef = $.ajax({method: 'GET', url: 'api/lsoh', dataType: 'json'})
       .done(hs => { this.setState({hs}) })
       .fail(this.context.app.handleJQueryAjaxFail)
-    this.state.hsTimeoutRef = setTimeout(this.pollHs, +this.state.hsInterval)
+    this.hsTimeoutRef = setTimeout(this.pollHs, +this.state.hsInterval)
   },
 
   onResize () {
