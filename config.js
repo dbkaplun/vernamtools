@@ -1,18 +1,11 @@
-const _ = require('lodash')
-const moment = require('moment')
+const rc = require('rc')
 
-try {
-  var local = require('./local')
-} catch (e) {
-  var local = {}
-}
+const pkg = require('./package')
 
-var config = _.merge({
+module.exports = rc(pkg.name, {
   open: true,
   hostname: process.env.HOSTNAME || 'localhost',
   port: parseInt(process.env.PORT, 10) || 3370,
   psColumns: ['pid', 'ppid', 'pcpu', 'pmem', 'user', 'args', 'comm'],
   maxBuffer: 10000*1024 // increase if you are getting "stdout maxBuffer exceeded." errors
-}, local)
-
-module.exports = config
+})
