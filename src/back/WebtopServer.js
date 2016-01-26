@@ -10,12 +10,20 @@ const errorHandler = require('errorhandler')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const opn = require('opn')
-
-const execAsync = Promise.promisify(require('child_process').exec)
 const parseColumns = require('parse-columns')
+const execAsync = Promise.promisify(require('child_process').exec)
 
-const numericPsCols = require('../numericPsCols')
-const arrayToObjectKeys = require('../arrayToObjectKeys')
+function getTransform (cols) {
+  return (val, col) => {
+    if (typeof cols[col] === 'function') return cols[col].apply(this, arguments)
+    switch (cols[col]) {
+      case 'number': val = Number(val)
+    }
+    return val
+  }
+}
+
+const psTransform = getTransform(require('../psCols'))
 
 class WebtopServer {
   constructor (opts) {
@@ -69,14 +77,15 @@ class WebtopServer {
       .done()
   }
 
+  _ps (args) { return this.execTable(`ps -Eeo ${args.join(',')}`, psTransform) }
   ps () {
-    var colsObj = _(this.opts.psColumns).object().set('pid', true).value()
+    var cols = _(this.opts.psColumns).object().set('pid', true).value()
     var psCalls = []
-    if ('args' in colsObj && 'comm' in colsObj) {
+    if ('args' in cols && 'comm' in cols) {
       psCalls.push(['pid', 'args'])
-      delete colsObj.args
+      delete cols.args
     }
-    psCalls.push(_.keys(colsObj))
+    psCalls.push(_.keys(cols))
     return Promise
       .all(psCalls.map(args => this._ps(args)))
       .then(ress => _(ress)
@@ -96,12 +105,9 @@ class WebtopServer {
         .value())
   }
 
-  _ps (args) {
-    return execAsync(`ps -Eeo ${args.join(',')}`, {maxBuffer: this.opts.maxBuffer})
-      .then(stdout => parseColumns(stdout, {transform: (el, header) => {
-        if (numericPsCols[header]) el = Number(el)
-        return el
-      }}))
+  execTable (cmd, transform) {
+    return execAsync(cmd, {maxBuffer: this.opts.maxBuffer})
+      .then(stdout => parseColumns(stdout, {transform: transform}))
   }
 }
 WebtopServer.FAKE_ARGS = ['-x', '-y', '--foo', '--bar=2', 'BAZ=123', '__BEEP_BOOP=80085']

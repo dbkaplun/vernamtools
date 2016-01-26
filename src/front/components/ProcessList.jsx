@@ -9,7 +9,6 @@ import moment from 'moment'
 import unsplay from 'unsplay'
 
 import contextTypes from './contextTypes'
-import numericPsCols from '../../numericPsCols'
 import arrayToObjectKeys from '../../arrayToObjectKeys'
 import splayDepthFirst from '../../splayDepthFirst'
 
@@ -23,7 +22,6 @@ const HeaderCell = ({columnKey, children, ...props}) => (
 export default React.createClass({
   contextTypes: contextTypes,
   statics: {
-    sumColumns: _.pick(numericPsCols, (tmp, col) => col.match(/^%/)),
     initialState: {
       ps: [],
       // generated directly from ps in componentWillUpdate
