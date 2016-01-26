@@ -85,7 +85,7 @@ export default React.createClass({
       var bVal = dpB.item[sort.columnKey]
       var cmp = psCols[sort.columnKey] === 'number'
         ? Math.sign(aVal - bVal)
-        : aVal.localeCompare(bVal)
+        : (aVal || '').toString().localeCompare(bVal || '')
       return cmp * (sort.sortDir === SortHeader.SortTypes.DESC ? 1 : -1)
     })
 

@@ -15,12 +15,13 @@ import HeaderCell from './HeaderCell.jsx'
 export default React.createClass({
   contextTypes: contextTypes,
   statics: {
+    lsohNameRE: /^(\S+?):(\S+?)(->(\S+?):(\S+?))?(\s*\((.*?)\))?$/,
     initialState: {
       hs: [],
       // generated directly from hs in componentWillUpdate
       displayHs: [],
 
-      sort: {columnKey: 'PID', sortDir: SortHeader.SortTypes.ASC},
+      sort: {columnKey: 'status', sortDir: SortHeader.SortTypes.ASC},
       filter: '',
       hsInterval: moment.duration(1, 'seconds'),
       tableWidth: 940,
@@ -41,7 +42,16 @@ export default React.createClass({
     var sort = state.sort
 
     // begin displayHs computation
-    var displayHs = state.hs.map(h => ({item: h}))
+    var displayHs = state.hs.map(h => {
+      let dh = {item: h}
+      var match = h.NAME.match(this.constructor.lsohNameRE)
+      if (!match) {
+        console.error(h.NAME) // FIXME: log this somehow, this shouldn't happen
+        return dh
+      }
+      let [, srcAddr, srcPort, , dstAddr, dstPort, , status] = match
+      return _.merge(dh, {srcAddr, srcPort, dstAddr, dstPort, status})
+    })
     // items have no unique values so selection is impossible
     // maybe that can be mitigated with a composite key to index rows
 
@@ -52,12 +62,15 @@ export default React.createClass({
       ))
     ))
 
+    var rawCol = sort.columnKey
+    var match = rawCol.match(/^item\[(.*)\]$/)
+    if (match) rawCol = JSON.parse(match[1])
     displayHs.sort((dhA, dhB) => {
-      var aVal = dhA.item[sort.columnKey]
-      var bVal = dhB.item[sort.columnKey]
-      var cmp = lsoiCols[sort.columnKey] === 'number'
+      var aVal = _.get(dhA, sort.columnKey)
+      var bVal = _.get(dhB, sort.columnKey)
+      var cmp = lsoiCols[rawCol] === 'number'
         ? Math.sign(aVal - bVal)
-        : aVal.localeCompare(bVal)
+        : (aVal || '').toString().localeCompare(bVal || '')
       return cmp * (sort.sortDir === SortHeader.SortTypes.DESC ? 1 : -1)
     })
 
@@ -87,7 +100,7 @@ export default React.createClass({
     this.setState({filter: evt.target.value})
   },
   onSortChange (columnKey, sortDir) {
-    this.setState({sort: {columnKey, sortDir}, treeView: false})
+    this.setState({sort: {columnKey, sortDir}})
   },
 
   renderSortHeaderCell ({columnKey, children, ...props}) {
@@ -104,6 +117,12 @@ export default React.createClass({
       </HeaderCell>
     )
   },
+  renderItemSortHeaderCell ({columnKey, ...props}) {
+    const SortHeaderCell = this.renderSortHeaderCell
+    return (
+      <SortHeaderCell {...props} columnKey={`item[${JSON.stringify(columnKey)}]`}>{columnKey}</SortHeaderCell>
+    )
+  },
   renderBodyCell ({columnKey, rowIndex, children, ...props}) {
     return (
       <Cell {...props}
@@ -117,6 +136,7 @@ export default React.createClass({
     var displayHs = state.displayHs
     const BodyCell = this.renderBodyCell
     const SortHeaderCell = this.renderSortHeaderCell
+    const ItemSortHeaderCell = this.renderItemSortHeaderCell
     return (
       <div ref="root">
         <div className="clearfix media-heading">
@@ -134,50 +154,91 @@ export default React.createClass({
             rowHeight={36 /* FIXME: duplicated in ../less/tables.less */}>
             <Column
               fixed={true}
-              columnKey="NAME"
-              header={SortHeaderCell}
-              cell={BodyCell}
+              columnKey="SRC ADDR"
+              header={({columnKey, ...props}) => (
+                <SortHeaderCell columnKey="srcAddr" {...props}>{columnKey}</SortHeaderCell>
+              )}
+              cell={props => (
+                <BodyCell {...props}>{displayHs[props.rowIndex].srcAddr}</BodyCell>
+              )}
+              width={125} />
+            <Column
+              fixed={true}
+              columnKey="SRC PORT"
+              header={({columnKey, ...props}) => (
+                <SortHeaderCell columnKey="srcPort" {...props}>{columnKey}</SortHeaderCell>
+              )}
+              cell={props => (
+                <BodyCell {...props}>{displayHs[props.rowIndex].srcPort}</BodyCell>
+              )}
               width={100} />
+            <Column
+              columnKey="DST ADDR"
+              header={({columnKey, ...props}) => (
+                <SortHeaderCell columnKey="dstAddr" {...props}>{columnKey}</SortHeaderCell>
+              )}
+              cell={props => (
+                <BodyCell {...props}>{displayHs[props.rowIndex].dstAddr}</BodyCell>
+              )}
+              width={150} />
+            <Column
+              columnKey="DST PORT"
+              header={({columnKey, ...props}) => (
+                <SortHeaderCell columnKey="dstPort" {...props}>{columnKey}</SortHeaderCell>
+              )}
+              cell={props => (
+                <BodyCell {...props}>{displayHs[props.rowIndex].dstPort}</BodyCell>
+              )}
+              width={100} />
+            <Column
+              columnKey="STATUS"
+              header={({columnKey, ...props}) => (
+                <SortHeaderCell columnKey="status" {...props}>{columnKey}</SortHeaderCell>
+              )}
+              cell={props => (
+                <BodyCell {...props}>{displayHs[props.rowIndex].status}</BodyCell>
+              )}
+              width={125} />
             <Column
               columnKey="PID"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={75} />
             <Column
               columnKey="TYPE"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={60} />
             <Column
               columnKey="NODE"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={60} />
             <Column
               columnKey="COMMAND"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
               width={100} />
             <Column
               columnKey="USER"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
               width={100} />
             <Column
               columnKey="FD"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={50} />
             <Column
               columnKey="DEVICE"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={150} />
             <Column
               columnKey="SIZE/OFF"
-              header={SortHeaderCell}
+              header={ItemSortHeaderCell}
               cell={BodyCell}
-              width={100} />
+              width={80} />
           </Table>
         </div>
       </div>

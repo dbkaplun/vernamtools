@@ -20,11 +20,11 @@ export default React.createClass({
           </div>
 
           <div className="navbar-collapse" id="navbar-collapse">
-            {/*<ul className="nav navbar-nav">
+            <ul className="nav navbar-nav">
               <WebtopLink to="/ps" tag="li">Processes</WebtopLink>
-              <WebtopLink to="/lsoh" tag="li">Handles</WebtopLink>*/}
+              <WebtopLink to="/lsoh" tag="li">Handles</WebtopLink>
               {/*<li><WebtopLink to="/settings" className="btn btn-danger navbar-btn btn-sm">Settings</WebtopLink></li>*/}
-            {/*</ul>*/}
+            </ul>
             <ul className="nav navbar-nav navbar-right">
               <li><a href="https://github.com/dbkaplun/webtop" title="★, source, issues" target="_blank" data-toggle="tooltip" data-placement="bottom">
                 Github
