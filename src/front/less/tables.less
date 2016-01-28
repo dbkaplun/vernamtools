@@ -1,6 +1,9 @@
 @import (less) "node_modules/fixed-data-table/dist/fixed-data-table.css";
 
-@ps-table-row-height: 36px; // FIXME: duplicated in components/ProcessList.jsx
+@fdt-row-height: 36px; // FIXME: duplicated in ../components/*.jsx
+@fdt-cellgroup-selector: ~".fixedDataTableCellGroupLayout_cellGroupWrapper";
+@fdt-cellgroup-selector-fixed: ~"@{fdt-cellgroup-selector}[data-reactid$='fixed_cells']";
+@fdt-cellgroup-selector-scrollable: ~"@{fdt-cellgroup-selector}[data-reactid$='scrollable_cells']";
 
 // fixed-data-table style overrides
 .public_fixedDataTable_main { border-radius: @border-radius-base; }
@@ -18,17 +21,21 @@
   white-space: nowrap;
   &:hover { white-space: normal; word-break: break-word; }
 }
-.public_fixedDataTable_bodyRow {
-  .public_fixedDataTableCell_wrap1,
-  .public_fixedDataTableCell_wrap2,
-  .public_fixedDataTableCell_wrap3 { &:not(:hover) { display: block; } }
+
+.public_fixedDataTableCell_wrap1,
+.public_fixedDataTableCell_wrap2,
+.public_fixedDataTableCell_wrap3 {
+  .public_fixedDataTable_bodyRow &:not(:hover),
+  .public_fixedDataTable_bodyRow @{fdt-cellgroup-selector-fixed} & {
+    display: block;
+  }
 }
 .public_fixedDataTableCell_wrap1:hover {
   .public_fixedDataTable_hasBottomBorder & { position: absolute; bottom: 0; }
   .public_fixedDataTable_footer & { position: absolute; bottom: -1px; }
 }
 .public_fixedDataTableCell_cellContent {
-  min-height: @ps-table-row-height;
+  min-height: @fdt-row-height;
   margin-right: 1px;
   overflow: hidden; text-overflow: ellipsis;
   .public_fixedDataTableCell_main:first-child & { margin-left: -1px; }
@@ -37,16 +44,16 @@
     .public_fixedDataTable_footer & { .state('info'); }
   }
 }
-// FIXME: scrollable cell :hover bleed on fixed cells, something like `.fixedDataTableRowLayout_body > :first-child { z-index: 1000 !important; }`
+// FIXME: scrollable cell :hover bleed on fixed cells, something like `@{fdt-cellgroup-selector-scrollable} { z-index: 1000 !important; }`
 // FIXME: header/footer shadow bleeds over footer cell :hover
 // FIXME: .public_fixedDataTable_hasBottomBorder border disappears on :hover
 
 // custom styles
-.fixedDataTableRowLayout_body > :first-child { // fixed cells on left
+@{fdt-cellgroup-selector-fixed} { // fixed cells on left
   .public_fixedDataTableCell_wrap1 { overflow: hidden; }
 }
 .column-Tree-body-cell {
   font-family: @font-family-monospace; white-space: pre; text-overflow: clip; cursor: default;
-  line-height: @ps-table-row-height; font-size: @ps-table-row-height / 1.2;
+  line-height: @fdt-row-height; font-size: @fdt-row-height / 1.2;
   .public_fixedDataTableCell_cellContent { padding-top: 0; padding-bottom: 0; }
 }
