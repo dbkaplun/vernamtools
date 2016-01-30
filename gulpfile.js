@@ -3,9 +3,7 @@ var gutil = require('gulp-util')
 var source = require('vinyl-source-stream')
 var buffer = require('vinyl-buffer')
 var sourcemaps = require('gulp-sourcemaps')
-var Promise = require('bluebird')
 
-var fs = Promise.promisifyAll(require('fs'))
 var path = require('path')
 
 // js
@@ -24,16 +22,13 @@ var flatten = require('gulp-flatten')
 // html
 var htmlmin = require('gulp-htmlmin')
 
-var WebtopServer = require('./src/back/WebtopServer')
-var config = require('./config')
-
-var src = 'src/front/'
+var src = 'src/'
 var dist = 'dist/'
 
 var watching = false
 var b = watchify(browserify(watchify.args))
   .transform('babelify')
-  .add(src+'index.jsx')
+  .add(path.resolve(src, 'index.jsx'))
   .on('log', gutil.log)
 
 function bundle () {
@@ -53,10 +48,10 @@ gulp.task('build-js', bundle)
 gulp.task('build-fonts', () => {
   return gulp.src('**/*.{ttf,woff,woff2,eof,svg}')
     .pipe(flatten())
-    .pipe(gulp.dest(path.join(dist, 'fonts')))
+    .pipe(gulp.dest(path.resolve(dist, 'fonts')))
 })
 gulp.task('build-css', () => {
-  return gulp.src(src+'less/index.less')
+  return gulp.src(path.resolve(src, 'less/index.less'))
     .pipe(sourcemaps.init())
       // Add transformation tasks to the pipeline here
       .pipe(less())
@@ -66,9 +61,9 @@ gulp.task('build-css', () => {
     .pipe(gulp.dest(dist))
 })
 gulp.task('build-html', ['build-js', 'build-css', 'build-fonts'], () => {
-  return gulp.src(src+'index.html')
+  return gulp.src(path.resolve(src, 'index.html'))
     .pipe(htmlmin({collapseWhitespace: true, removeComments: true}))
-    .pipe(gulp.dest(dist))
+    .pipe(gulp.dest('.'))
 })
 gulp.task('build', ['build-html'])
 
@@ -79,11 +74,4 @@ gulp.task('watch', ['pre-watch', 'build'], () => {
   gulp.watch('**/*.html', ['build-html'])
 })
 
-gulp.task('serve', () => {
-  new WebtopServer(config).main()
-})
-
-gulp.task('set-debug', () => { config.debug = true })
-gulp.task('pre-dev', ['set-debug', 'watch'])
-gulp.task('dev', ['pre-dev', 'serve'])
-gulp.task('default', ['serve'])
+gulp.task('default', ['build'])

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import jQuery from 'jquery'; window.jQuery = jQuery
 require('bootstrap/dist/js/bootstrap')
 
-import Webtop from './components/Webtop.jsx'
+import VernamTools from './components/VernamTools.jsx'
 
 jQuery($ => {
   $('body')
@@ -18,6 +18,6 @@ jQuery($ => {
     .on('show.bs.tooltip', '*', evt => $('.tooltip').remove()) // FIXME: hack to ensure only one tooltip is shown at a time
 
   ReactDOM.render((
-    <Webtop />
-  ), $('#webtop')[0])
+    <VernamTools />
+  ), $('#vernamtools')[0])
 })
