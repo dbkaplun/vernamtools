@@ -6,7 +6,7 @@ import {strToRe, strGroup} from '../strOps'
 import mem from 'mem'
 
 const ALL_CHARS = _.times(0xFF+1, String.fromCharCode)
-const DISPLAYABLE_CHARACTERS_RE = /^[^\u0000-\u001F\u007F-\u009F]+$/
+const DISPLAYABLE_CHARACTERS_RE = /^[^\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]+$/ // all but 0x00-0x08, 0x0b-0x0c, 0x0e-0x1f, 0x7f-0x9f
 const DISPLAYABLE_ASCII_CHARACTERS_RE = /^[\u0020-\u007E]+$/
 const DISPLAY_DISPLAYABLE_CHARACTERS_RE_SOURCE = `/${DISPLAYABLE_CHARACTERS_RE.source}/`
 const DISPLAY_DISPLAYABLE_ASCII_CHARACTERS_RE_SOURCE = `/${DISPLAYABLE_ASCII_CHARACTERS_RE.source}/`
