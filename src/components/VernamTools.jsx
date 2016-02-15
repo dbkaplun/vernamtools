@@ -353,7 +353,11 @@ export default React.createClass({
 
     return (
       <form className="form-horizontal container" role="form">
-        <h1>vernamtools</h1>
+        <h1 className="clearfix">
+          vernamtools
+          {' '}
+          <small>code, ★ on <a href="https://github.com/dbkaplun/vernamtools" target="_blank">Github</a></small>
+        </h1>
         <p className="text-muted">NOTE: JSON strings are used everywhere, so make sure to escape your data.</p>
         <div className="row">
           <div className="col-sm-6">
