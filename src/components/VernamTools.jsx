@@ -242,10 +242,12 @@ export default React.createClass({
     state.isVernamValid = state.isKeyValid && state.isOutputValid
 
     // conditionally pause brute force
-    if (isInputDifferent ||
+    state.canBruteForce = keyLength && state.isInputValid && !_.includes(['ACYCLIC', 'KEYSPACE_EXHAUSTED'], state.bruteForceStatus)
+    if ((!state.canBruteForce && (isKeyDifferent || isPropDifferent('validGuessChars'))) ||
+      isInputDifferent ||
       isKeyLengthDifferent || isIsAllowedKeyCharDifferent || isKeyValidatorFnDifferent ||
-      isKnownPlaintextsDifferent || isIsAllowedOutputCharDifferent || isOutputValidatorFnDifferent ||
-      (state.bruteForceStatus === 'KEYSPACE_EXHAUSTED' && (isKeyDifferent || isKeyTemplateDifferent))) {
+      isKnownPlaintextsDifferent || isIsAllowedOutputCharDifferent || isOutputValidatorFnDifferent
+    ) {
       state.guess = null
       state.keyTemplateIndex = 0
       state.bruteForceStatus = 'PAUSED'
@@ -268,7 +270,7 @@ export default React.createClass({
     let state, {keyTemplates, keyTemplateIndex, guess, validGuessChars} = state = this.state
     let keyTemplate = keyTemplates[keyTemplateIndex]
 
-    if (!keyTemplate) this.setState({bruteForceStatus: 'KEYSPACE_EXHAUSTED'})
+    if (!(keyTemplate && _.every(validGuessChars, 'length'))) this.setState({bruteForceStatus: 'ACYCLIC'})
     else if (guess === null) {
       guess = _.flatMap(keyTemplate, (c, i) => i in keyTemplate ? [] : [0])
     } else {
@@ -331,6 +333,7 @@ export default React.createClass({
 
       // brute force
       bruteForceStatus, bruteForceIndex, bruteForceBatchSize, pastValidOutputs,
+      canBruteForce,
 
       // key validators
       isKeyLengthValid, isKeyValid,
@@ -348,8 +351,6 @@ export default React.createClass({
       invalidOutputChars, invalidOutputPrefixChars,
       displayOutputValidator, outputValidatorFn, outputPassesValidator
     } = this.state
-
-    let canBruteForce = keyLength && isInputValid
 
     return (
       <form className="form-horizontal container" role="form">
@@ -386,7 +387,7 @@ export default React.createClass({
                 <textarea id="input" name="displayInput" value={displayInput} onChange={this.onChange} rows="5" className="form-control" autofocus />
               </div>
             </div>
-            <div className={`form-group ${canBruteForce && bruteForceStatus !== 'KEYSPACE_EXHAUSTED' ? '' : 'has-error'}`}>
+            <div className={`form-group ${canBruteForce ? '' : 'has-error'}`}>
               <div className="col-sm-9 col-sm-offset-3">
                 <div>
                   <span className="btn-group">
@@ -403,6 +404,7 @@ export default React.createClass({
                 </div>
                 <p className="text-muted">NOTE: for increased performance, use validations to reduce search space.</p>
                 <p className={`help-block ${bruteForceStatus === 'KEYSPACE_EXHAUSTED' ? '' : 'hide'}`}>Keyspace exhausted for this key length.</p>
+                <p className={`help-block ${bruteForceStatus === 'ACYCLIC' && keyLength ? '' : 'hide'}`}>This input does not support a {keyLength}-character key.</p>
                 <p className={`help-block ${!keyLength ? '' : 'hide'}`}>You must select a key length in order to perform a brute force search.</p>
               </div>
             </div>
