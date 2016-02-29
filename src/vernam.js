@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import mem from 'mem'
 
-import {mapEmpty} from './arrayOps'
 import {strGroup} from './strOps'
 
 const vernam = mem((string, key, keyLength=key.length) => {
@@ -27,7 +26,9 @@ export const knownPlaintext = mem((cipher, keyLength, plains, filter=_.constant(
 
           let newKeyTemplate = _.reduce(inverse, (tpl, c, i) => {
             i = (i+offset)%keyLength // rotate index
-            return i in tpl ? tpl : _.set(tpl, i, c)
+            if (_.get(tpl, i, c) !== c) throw _.merge(new Error("key template and inverse do not match"), {code: 'OVERWRITE'})
+            tpl[i] = c
+            return tpl
           }, keyTemplate.slice())
 
           let testKey = fillSparse(newKeyTemplate, '\0')
@@ -46,14 +47,13 @@ export const knownPlaintext = mem((cipher, keyLength, plains, filter=_.constant(
 
 export const fillSparse = (xs, val) => {
   if (typeof val !== 'function') val = _.constant(val)
-  let sparseIndex = 0
-  return _.reduce(xs, (filled, x, i) => filled + (i in xs ? x : val(sparseIndex++)), '')
+  return _.reduce(xs, (filled, x, i) => filled + (i in xs ? x : val(i)), '')
 }
 
 export const isCyclic = mem((str, len) => str.length < len || str === _.padEnd('', len, str.slice(0, len)))
 
 // Port of parts of xortool
-export const calculateFitnesses = mem((text, keyLengthMax) => {
+export const getKeyLengthFitnesses = mem((text, keyLengthMax) => {
   /*
    * Calc. fitnesses for each keylen
    */
