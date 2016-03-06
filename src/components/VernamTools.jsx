@@ -519,7 +519,7 @@ export default React.createClass({
                       : ''
                   }</dd>
 
-                  <dt className={currentKeyLength ? '' : 'hide'} title={`Optimized keyspace size, ${currentKeyLength} characters`} data-toggle="tooltip">
+                  <dt className={currentKeyLength ? '' : 'hide'} title={`Approximate keyspace size, ${currentKeyLength} characters`} data-toggle="tooltip">
                     <span className="glyphicon glyphicon-heart" aria-hidden="true"></span>
                   </dt>
                   <dd className={currentKeyLength ? '' : 'hide'}>{
