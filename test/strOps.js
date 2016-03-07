@@ -14,7 +14,7 @@ test(`strToRe(${JSON.stringify(mockReStr)}) === ${mockReStr}`, t => {
   let reStrRe = strToRe(mockReStr)
   t.ok(reStrRe instanceof RegExp)
   t.ok(reStrRe.source, mockReStr.replace(/(^\/)|(\/$)/g, ''))
-  // t.ok(reStrRe.flags, mockReStr.replace(/^.*\//, ''))
+  // t.ok(reStrRe.flags, mockReStr.replace(/^.*\//g, ''))
 })
 
 let mockInvalidReStr = 'this is not a regexp'

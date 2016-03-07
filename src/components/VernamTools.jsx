@@ -24,7 +24,7 @@ const toDisplayString = mem(string => (
 
 const fromDisplayString = mem(string => {
   try {
-    return JSON.parse(`"${string.replace('\n', '\\n').replace('\r', '\\r')}"`)
+    return JSON.parse(`"${string.replace(/\n/g, '\\n').replace(/\r/g, '\\r')}"`)
   } catch (e) {
     return null
   }
@@ -132,12 +132,12 @@ export default React.createClass({
         displayKnownPlaintexts: 'document',
         displayOutputAllowedChars: DISPLAY_DISPLAYABLE_CHARACTERS_RE_SOURCE,
         displayOutputValidator: `
-  try {
-    eval(p);
-  } catch (e) {
-    if (e.name === 'SyntaxError') return false;
-  }
-  return true;
+try {
+  eval(p);
+} catch (e) {
+  if (e.name === 'SyntaxError') return false;
+}
+return true;
         `.trim()
       }
     }
@@ -199,8 +199,8 @@ export default React.createClass({
     newState.pastValidOutputs = []
     newState.bruteForceState.vernamBruteForcer = new VernamBruteForcer(_(state)
       .pick(
-        'keyLengthMax', 'keyCharValidator', 'keyValidator',
-        'knownPlaintexts', 'outputCharValidator', 'outputValidator')
+        'keyLengthMax', 'keyCharValidator',
+        'knownPlaintexts', 'outputCharValidator')
       .merge(keyLength && {keyLengths: [{keyLength, fitness: 1}]})
       .pickBy(Boolean)
       .merge({ciphertext: input})
@@ -225,14 +225,29 @@ export default React.createClass({
     })
   },
   guessWhile: Promise.method(function (iteratee=returnTrue) {
-    let {status, vernamBruteForcer} = this.state.bruteForceState
+    let {bruteForceState, input, keyValidator, outputValidator} = this.state
+    let {status, vernamBruteForcer} = bruteForceState
     if (status !== 'ACTIVE' || !iteratee()) return
+
     return new Promise(resolve => {
-      this.setState(this.updateKey({}, vernamBruteForcer.nextGuess()), resolve)
+      let key = vernamBruteForcer.next()
+      let newState = {}
+      // newState = this.updateKey(newState, key)
+      newState = this._updateKeyFromBruteForceGuess(newState, key)
+      this.setState(newState, () => {
+        process.nextTick(resolve)
+      })
     })
-      .delay() // unblocks event loop
+      // .delay() // unblocks event loop
       .then(() => this.guessWhile(iteratee))
   }),
+  _updateKeyFromBruteForceGuess (newState, key) {
+    // this is an optimized version of updateKey + updateOutput + validateOutput
+    // for brute force which already validates certain properties
+    newState = this.updateKey(newState, key)
+    newState = this.updateOutput(newState, true)
+    return newState
+  },
 
   bruteForce (...args) {
     return new Promise(resolve => this.setState(this.initBruteForce(), resolve))
@@ -265,54 +280,41 @@ export default React.createClass({
 
   // handlers
   updateDisplayInput (newState, displayInput) {
-    _.merge(newState, {
+    return this.resetBruteForce(_.merge(newState, {
       displayInput,
       input: fromDisplayString(displayInput),
       pastValidOutputs: []
-    })
-    newState = this.validateInput(newState)
-    newState = this.updateOutput(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    }))
   },
 
   updateKey (newState, key, displayKey) {
     if (typeof displayKey !== 'string') displayKey = toDisplayString(key)
-    _.merge(newState, {key, displayKey})
-    newState = this.validateKey(newState)
-    newState = this.updateOutput(newState)
-    return newState
+    return _.merge(newState, {key, displayKey})
   },
   updateDisplayKey (newState, displayKey) {
     return this.updateKey(newState, fromDisplayString(displayKey), displayKey)
   },
   updateDisplayKeyLength (newState, displayKeyLength) {
-    _.merge(newState, {displayKeyLength, keyLength: Number(displayKeyLength)})
-    newState = this.validateKey(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    return this.resetBruteForce(_.merge(newState, {
+      displayKeyLength,
+      keyLength: Number(displayKeyLength)
+    }))
   },
   updateDisplayKeyAllowedChars (newState, displayKeyAllowedChars) {
-    _.merge(newState, {
+    return this.resetBruteForce(_.merge(newState, {
       displayKeyAllowedChars,
       keyCharValidator: parseCharValidator(displayKeyAllowedChars)
-    })
-    newState = this.validateKey(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    }))
   },
   updateDisplayKeyValidator (newState, displayKeyValidator) {
-    _.merge(newState, {
+    return this.resetBruteForce(_.merge(newState, {
       displayKeyValidator,
       keyValidator: parseValidator('k', displayKeyValidator)
-    })
-    newState = this.validateKey(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    }))
   },
 
   updateDisplayOutputPrefix (newState, displayOutputPrefix) {
-    _.merge(newState, {displayOutputPrefix})
+    newState = _.merge(newState, {displayOutputPrefix})
 
     // compute key from output prefix
     // this updates output, which indirectly updates outputPrefix
@@ -322,34 +324,25 @@ export default React.createClass({
     return newState
   },
   updateDisplayKnownPlaintexts (newState, displayKnownPlaintexts) {
-    _.merge(newState, {
+    return this.resetBruteForce(_.merge(newState, {
       displayKnownPlaintexts,
       knownPlaintexts: arrayFromDisplayString(displayKnownPlaintexts)
-    })
-    newState = this.validateOutput(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    }))
   },
   updateDisplayOutputAllowedChars (newState, displayOutputAllowedChars) {
-    _.merge(newState, {
+    return this.resetBruteForce(_.merge(newState, {
       displayOutputAllowedChars,
       outputCharValidator: parseCharValidator(displayOutputAllowedChars)
-    })
-    newState = this.validateOutput(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    }))
   },
   updateDisplayOutputValidator (newState, displayOutputValidator) {
-    _.merge(newState, {
+    return this.resetBruteForce(_.merge(newState, {
       displayOutputValidator,
       outputValidator: parseValidator('p', displayOutputValidator)
-    })
-    newState = this.validateOutput(newState)
-    newState = this.resetBruteForce(newState)
-    return newState
+    }))
   },
 
-  updateOutput (newState) {
+  updateOutput (newState, fromBruteForce=false) {
     let {input, key} = this.getState(newState)
     key = key || ''
     input = input || ''
@@ -360,7 +353,7 @@ export default React.createClass({
       outputPrefix,
       displayOutput: toDisplayString(output),
       displayOutputPrefix: toDisplayString(outputPrefix)
-    }))
+    }), fromBruteForce)
   },
 
   // validations
@@ -372,23 +365,30 @@ export default React.createClass({
       isInputValid: isDisplayInputValid
     })
   },
-  validateOutput (newState) {
-    let {key, output, outputPrefix, knownPlaintexts, outputCharValidator, outputValidator, pastValidOutputs} = this.getState(newState)
+  validateOutput (newState, fromBruteForce=false) {
+    let {key, output, outputPrefix, knownPlaintexts, outputCharValidator, outputValidator} = this.getState(newState)
     let isDisplayOutputValid = output !== null
     output = output || ''
-    let isOutputCharsValid = !outputCharValidator || _.every(output, outputCharValidator)
+    let isOutputCharsValid = fromBruteForce || !outputCharValidator || _.every(output, outputCharValidator)
     let isOutputValidForValidator = !outputValidator || outputValidator(output)
-    let missingPlaintexts = (knownPlaintexts || []).filter(plain => plain !== null && output.indexOf(plain) === -1)
+    let missingPlaintexts = (fromBruteForce && knownPlaintexts || []).filter(plain => plain !== null && output.indexOf(plain) === -1)
     let isOutputValid = isDisplayOutputValid && isOutputCharsValid && isOutputValidForValidator && !missingPlaintexts.length
 
-    if (output && isOutputValid) pastValidOutputs = [{key, output}, ...pastValidOutputs].slice(0, 50)
-    return _.merge(newState, {
+    newState = _.merge(newState, {
       isDisplayOutputValid,
       isOutputCharsValid,
       isOutputValidForValidator,
       missingPlaintexts,
-      isOutputValid,
-      pastValidOutputs
+      isOutputValid
+    })
+    if (output && isOutputValid) newState = this.addValidOutput(newState)
+
+    return newState
+  },
+  addValidOutput (newState) {
+    let {key, output, pastValidOutputs} = this.getState(newState)
+    return _.merge(newState, {
+      pastValidOutputs: [{key, output}, ...pastValidOutputs].slice(0, 50)
     })
   },
   validateKey (newState) {
@@ -408,6 +408,11 @@ export default React.createClass({
   },
 
   _render () {
+    let state = this.getState()
+    state = this.validateInput(state)
+    state = this.validateKey(state)
+    state = this.updateOutput(state)
+
     const {
       // input
       input, displayInput,
@@ -434,7 +439,8 @@ export default React.createClass({
 
       // other
       demoState
-    } = this.state
+    } = state
+
     let {vernamBruteForcer, duration, startTime} = bruteForceState
     let {keyLengths} = vernamBruteForcer
     let canBruteForce = input && isInputValid
@@ -499,7 +505,7 @@ export default React.createClass({
                     </button>
                   </span>
                   <span className="text-muted">{' '}&bull;{' '}</span>
-                  <button onClick={()=>{this.setState(this.updateDisplayState(demoState))}} title="Load demo input" className="btn btn-danger" data-toggle="tooltip" data-placement="bottom" type="button">
+                  <button onClick={()=>{this.setState(this.updateDisplayState(demoState))}} title="Load demo input. Note that even one known plaintext reduces search space drastically" className="btn btn-danger" data-toggle="tooltip" data-placement="bottom" type="button">
                     <span className="glyphicon glyphicon-open" aria-hidden="true"></span>
                   </button>
                 </div>
@@ -645,14 +651,14 @@ ${_(output)
                   */}
                   {_.attempt(() => {
                     if (!keyLengths.length) return ''
-                    let {keyLength} = _.first(keyLengths)
+                    let keyLengthGuess = _.first(keyLengths).keyLength
                     let updateKeyLengthOnClick = evtStateHandler((newState, unused, evt) => {
                       evt.preventDefault()
-                      return this.updateDisplayKeyLength(newState, keyLength)
+                      return this.updateDisplayKeyLength(newState, keyLengthGuess)
                     }).bind(this)
                     return (
                       <span>
-                        My guess: <a onClick={updateKeyLengthOnClick}>{keyLength}</a>.
+                        My guess: <a onClick={updateKeyLengthOnClick}>{keyLengthGuess}</a>.
                       </span>
                     )
                   })}

@@ -12,10 +12,8 @@ export default class VernamBruteForcer {
     _.defaults(this, opts, {
       keyLengthMax: 64,
       keyCharValidator: returnTrue,
-      keyValidator: returnTrue,
       knownPlaintexts: [],
-      outputCharValidator: returnTrue,
-      outputValidator: returnTrue
+      outputCharValidator: returnTrue
     })
     _.defaults(this, {
       keyLengths: getKeyLengthFitnesses(this.ciphertext, this.keyLengthMax),
@@ -78,8 +76,8 @@ export default class VernamBruteForcer {
     }
   }
 
-  nextGuess () {
-    let {state, keyLengths, keyValidator} = this
+  next () {
+    let {state, ciphertext, keyLengths} = this
     let {guess, keyTemplateIndex, keyLengthIndex, attemptsPerKeyLength} = state
     if (keyLengthIndex >= keyLengths.length) throw _.merge(new Error("keyspace exhausted"), {code: 'KEYSPACE_EXHAUSTED'})
     let {keyLength} = keyLengths[keyLengthIndex]
@@ -104,14 +102,12 @@ export default class VernamBruteForcer {
           state.keyTemplateIndex = 0
           state.keyLengthIndex++
         }
-        return this.nextGuess()
+        return this.next()
       }
     }
 
     state.guess = guess
-    let key = fillSparse(keyTemplate, i => validGuessChars[i][guess[i]])
-    if (!keyValidator(key)) return this.nextGuess()
-    return key
+    return fillSparse(keyTemplate, i => validGuessChars[i][guess[i]])
   }
 }
 VernamBruteForcer.ALL_CHARS = _.times(0xFF+1, String.fromCharCode)
