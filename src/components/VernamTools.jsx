@@ -121,7 +121,7 @@ export default React.createClass({
         displayKeyLength: '9',
         displayKeyAllowedChars: DISPLAY_DISPLAYABLE_ASCII_CHARACTERS_RE_SOURCE,
         displayKeyValidator: '',
-        displayKnownPlaintexts: 'document',
+        displayKnownPlaintexts: 'indexOf',
         displayOutputAllowedChars: DISPLAY_DISPLAYABLE_CHARACTERS_RE_SOURCE,
         displayOutputValidator: `
 try {
@@ -440,9 +440,10 @@ return true;
       demoState
     } = state
 
-    let {vernamBruteForcer, duration, startTime} = bruteForceState
+    let {status, vernamBruteForcer, duration, startTime} = bruteForceState
     let {keyLengths} = vernamBruteForcer
     let canBruteForce = input && isInputValid
+    let isBruteForcing = status === 'ACTIVE'
     let currentKeyLength = _.get(keyLengths, [vernamBruteForcer.state.keyLengthIndex, 'keyLength'])
     // let keyLengthDivisorGuesses = guessDivisors(keyLengths)
 
@@ -466,7 +467,7 @@ return true;
             <div className={`form-group ${isKeyValid ? '' : 'has-error'}`}>
               <label htmlFor="key" className="col-sm-3 control-label">Key</label>
               <div className="col-sm-9">
-                <input id="key" value={displayKey} onChange={this.updateDisplayKey.handler} placeholder={canBruteForce ? "Ready to brute force..." : ""} className="form-control" />
+                <input id="key" value={displayKey} onChange={this.updateDisplayKey.handler} readOnly={isBruteForcing} placeholder={canBruteForce ? "Ready to brute force..." : ""} className="form-control" />
                 <p className={`help-block ${!isKeyLengthValid ? '' : 'hide'}`}>
                   Key must be <strong>{keyLength}</strong> character(s) long.
                 </p>
@@ -485,7 +486,7 @@ return true;
             <div className={`form-group ${isInputValid ? '' : 'has-error'}`}>
               <label htmlFor="input" className="col-sm-3 control-label">Input</label>
               <div className="col-sm-9">
-                <textarea id="input" value={displayInput} onChange={this.updateDisplayInput.handler} rows="5" className="form-control" autofocus />
+                <textarea id="input" value={displayInput} onChange={this.updateDisplayInput.handler} readOnly={isBruteForcing} rows="5" className="form-control" autofocus />
               </div>
             </div>
             <div className={`form-group ${canBruteForce ? '' : 'has-error'}`}>
@@ -493,18 +494,18 @@ return true;
                 <h3>Brute force</h3>
                 <div>
                   <span className="btn-group">
-                    <button onClick={()=>{this.toggleBruteForce()}} title="Brute force" disabled={!canBruteForce} className={`btn btn-success ${bruteForceState.status === 'ACTIVE' ? 'active' : ''}`} data-toggle="tooltip" type="button">
-                      <span className={`glyphicon ${bruteForceState.status === 'ACTIVE' ? 'glyphicon-pause' : 'glyphicon-play'}`}></span>
+                    <button onClick={()=>{this.toggleBruteForce()}} title="Brute force" disabled={!canBruteForce} className={`btn btn-success ${isBruteForcing ? 'active' : ''}`} data-toggle="tooltip" data-placement="bottom" type="button">
+                      <span className={`glyphicon ${isBruteForcing ? 'glyphicon-pause' : 'glyphicon-play'}`}></span>
                     </button>
-                    <button onClick={()=>{this.bruteForceBatch(1)}} title="Next guess" disabled={!canBruteForce} className="btn btn-primary" data-toggle="tooltip" type="button">
+                    <button onClick={()=>{this.bruteForceBatch(1)}} title="Next guess" disabled={!canBruteForce || isBruteForcing} className="btn btn-primary" data-toggle="tooltip" data-placement="bottom" type="button">
                       <span className="glyphicon glyphicon-step-forward"></span>
                     </button>
-                    <button onClick={()=>{this.bruteForceBatch()}} title={`Take ${bruteForceBatchSize} guesses`} disabled={!canBruteForce} className="btn btn-warning" data-toggle="tooltip" type="button">
+                    <button onClick={()=>{this.bruteForceBatch()}} title={`Take ${bruteForceBatchSize} guesses`} disabled={!canBruteForce || isBruteForcing} className="btn btn-warning" data-toggle="tooltip" data-placement="bottom" type="button">
                       <span className="glyphicon glyphicon-fast-forward"></span>
                     </button>
                   </span>
                   <span className="text-muted">{' '}&bull;{' '}</span>
-                  <button onClick={()=>{this.setState(this.updateDisplayState(demoState))}} title="Load demo input. Note that even one known plaintext reduces search space drastically" className="btn btn-danger" data-toggle="tooltip" data-placement="bottom" type="button">
+                  <button onClick={()=>{this.setState(this.updateDisplayState(demoState))}} disabled={isBruteForcing} title="Load demo input. Note that even one known plaintext reduces search space drastically" className="btn btn-danger" data-toggle="tooltip" data-placement="bottom" type="button">
                     <span className="glyphicon glyphicon-open" aria-hidden="true"></span>
                   </button>
                 </div>
@@ -513,7 +514,7 @@ return true;
                   <dt title="Status" data-toggle="tooltip">
                     <span className="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                   </dt>
-                  <dd>{bruteForceState.status}</dd>
+                  <dd>{status}</dd>
 
                   <dt className={currentKeyLength ? '' : 'hide'} title={`Keys attempted, ${currentKeyLength} characters`} data-toggle="tooltip">
                     <span className="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
@@ -549,7 +550,7 @@ return true;
             <div className={`form-group ${!invalidOutputPrefixChars.length ? '' : 'has-error'}`}>
               <label htmlFor="output-prefix" className="col-sm-3 control-label">Output prefix</label>
               <div className="col-sm-9">
-                <input id="output-prefix" value={displayOutputPrefix} onChange={this.updateDisplayOutputPrefix.handler} className="form-control" />
+                <input id="output-prefix" value={displayOutputPrefix} onChange={this.updateDisplayOutputPrefix.handler} readOnly={isBruteForcing} className="form-control" />
                 <p className={`help-block ${invalidOutputPrefixChars.length ? '' : 'hide'}`}>
                   Disallowed characters: {invalidOutputPrefixChars.map((c, i) => (
                     <span key={i}>
@@ -640,7 +641,7 @@ ${_(output)
             <div className={`form-group ${keyLength === keyLength /* isNaN(keyLength) */ ? '' : 'has-error'}`}>
               <label htmlFor="key-length" className="col-sm-2 control-label">Length</label>
               <div className="col-sm-10">
-                <input id="key-length" value={displayKeyLength} onChange={this.updateDisplayKeyLength.handler} type="number" min="0" max={keyLengthMax} className="form-control" />
+                <input id="key-length" value={displayKeyLength} onChange={this.updateDisplayKeyLength.handler} readOnly={isBruteForcing} type="number" min="0" max={keyLengthMax} className="form-control" />
                 <p className="help-block">
                   {/*
                   <span className={keyLengthDivisorGuesses.length ? '' : 'hide'}>
@@ -667,7 +668,7 @@ ${_(output)
             <div className="form-group">
               <label htmlFor="allowed-key-chars" className="col-sm-2 control-label">Allowed characters</label>
               <div className="col-sm-10">
-                <input id="allowed-key-chars" value={displayKeyAllowedChars} onChange={this.updateDisplayKeyAllowedChars.handler} className="form-control" />
+                <input id="allowed-key-chars" value={displayKeyAllowedChars} onChange={this.updateDisplayKeyAllowedChars.handler} readOnly={isBruteForcing} className="form-control" />
                 <p className="help-block">
                   Any set of characters, or a regex. To match any
                   printable ASCII characters, use
@@ -678,7 +679,7 @@ ${_(output)
             <div className={`form-group ${!displayKeyValidator || keyValidator ? '' : 'has-error'}`}>
               <label htmlFor="key-validator" className="col-sm-2 control-label">Validator</label>
               <div className="col-sm-10">
-                <textarea id="key-validator" value={displayKeyValidator} onChange={this.updateDisplayKeyValidator.handler} rows="5" className="form-control" />
+                <textarea id="key-validator" value={displayKeyValidator} onChange={this.updateDisplayKeyValidator.handler} readOnly={isBruteForcing} rows="5" className="form-control" />
                 <p className="help-block">
                   A JS function that, when passed <var>k</var>, returns
                   whether or not <var>k</var> is a valid key. Ex:
@@ -693,7 +694,7 @@ ${_(output)
             <div className={`form-group ${knownPlaintexts.every(kp => kp !== null) ? '' : 'has-error'}`}>
               <label htmlFor="output-contains" className="col-sm-2 control-label">Known plaintext</label>
               <div className="col-sm-10">
-                <textarea id="output-contains" value={displayKnownPlaintexts} onChange={this.updateDisplayKnownPlaintexts.handler} rows="5" className="form-control" />
+                <textarea id="output-contains" value={displayKnownPlaintexts} onChange={this.updateDisplayKnownPlaintexts.handler} readOnly={isBruteForcing} rows="5" className="form-control" />
                 <p className="help-block">
                   One per line, strings that the output must contain. To
                   include a linebreak, enter <code>\n</code> or <code>\r</code>.
@@ -703,7 +704,7 @@ ${_(output)
             <div className="form-group">
               <label htmlFor="allowed-output-chars" className="col-sm-2 control-label">Allowed characters</label>
               <div className="col-sm-10">
-                <input id="allowed-output-chars" value={displayOutputAllowedChars} onChange={this.updateDisplayOutputAllowedChars.handler} className="form-control" />
+                <input id="allowed-output-chars" value={displayOutputAllowedChars} onChange={this.updateDisplayOutputAllowedChars.handler} readOnly={isBruteForcing} className="form-control" />
                 <p className="help-block">
                   Any set of characters, or a regex. To match any
                   printable characters, use
@@ -714,7 +715,7 @@ ${_(output)
             <div className={`form-group ${!displayOutputValidator || outputValidator ? '' : 'has-error'}`}>
               <label htmlFor="output-validator" className="col-sm-2 control-label">Validator</label>
               <div className="col-sm-10">
-                <textarea id="output-validator" value={displayOutputValidator} onChange={this.updateDisplayOutputValidator.handler} rows="5" className="form-control" />
+                <textarea id="output-validator" value={displayOutputValidator} onChange={this.updateDisplayOutputValidator.handler} readOnly={isBruteForcing} rows="5" className="form-control" />
                 <p className="help-block">
                   A JS function that, when passed <var>p</var>, returns
                   whether or not <var>p</var> is valid output. Ex:
