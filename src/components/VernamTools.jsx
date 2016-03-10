@@ -85,8 +85,7 @@ export default React.createClass({
 
       bruteForceBatchSize: 50,
       bruteForceState: {},
-
-      renderThrottle: 200,
+      bruteForceUpdateThrottle: 200,
 
       demoState: {
         displayInput: toDisplayString([
@@ -137,8 +136,6 @@ return true;
   },
 
   componentWillMount () {
-    this._render.throttled = _.throttle(this._render, this.state.renderThrottle)
-
     _.each([
       'updateDisplayInput',
       'updateDisplayKey', 'updateDisplayOutputPrefix',
@@ -147,6 +144,15 @@ return true;
     ], prop => { this[prop].handler = evtStateHandler(this[prop]).bind(this) })
 
     this.setState(this.updateDisplayState(this.state))
+  },
+
+  shouldComponentUpdate (props, state) {
+    let {bruteForceState, bruteForceUpdateThrottle} = state
+    if (bruteForceState.status !== 'ACTIVE') return true
+    let now = Date.now()
+    if ('lastUpdateTime' in this && this.lastUpdateTime + bruteForceUpdateThrottle > now) return false
+    this.lastUpdateTime = now
+    return true
   },
 
   updateDisplayState (displayState) {
@@ -402,7 +408,7 @@ return true;
     })
   },
 
-  _render () {
+  render () {
     let state = this.getState()
     state = this.validateInput(state)
     state = this.validateKey(state)
@@ -726,9 +732,5 @@ ${_(output)
         </p>
       </form>
     )
-  },
-
-  render () {
-    return this.state.bruteForceState.status === 'ACTIVE' ? this._render.throttled() : this._render()
   }
 })
