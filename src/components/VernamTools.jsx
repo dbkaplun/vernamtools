@@ -344,11 +344,12 @@ return true;
     input = input || ''
     let output = vernam(input, key)
     let outputPrefix = output.slice(0, key.length)
-    return this.validateOutput(_.merge(newState, {
-      output,
+    return this.validateOutput(_.merge({
       outputPrefix,
-      displayOutput: toDisplayString(output),
       displayOutputPrefix: toDisplayString(outputPrefix)
+    }, newState, {
+      output,
+      displayOutput: toDisplayString(output)
     }), fromBruteForce)
   },
 
