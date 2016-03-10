@@ -1,11 +1,7 @@
 import _ from 'lodash'
-import mem from 'mem'
 
 import vernam, {knownPlaintext, fillSparse, getKeyLengthFitnesses} from './vernam'
-import {strGroup} from './strOps'
-
-const return0 = _.constant(0)
-const returnTrue = _.constant(true)
+import {strGroup, return0, returnTrue} from './util'
 
 export default class VernamBruteForcer {
   constructor (opts) {

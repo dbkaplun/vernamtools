@@ -15,8 +15,7 @@
     "url": "git+https://github.com/dbkaplun/vernamtools.git"
   },
   "dependencies": {
-    "lodash": "4.3.0",
-    "mem": "0.1.1"
+    "lodash": "4.3.0"
   },
   "devDependencies": {
     "ava": "0.11.0",

@@ -1,12 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
 import Promise from 'bluebird'
-import mem from 'mem'
 import moment from 'moment'
 
 import vernam, {guessDivisors} from '../vernam'
 import VernamBruteForcer from '../VernamBruteForcer'
-import {strToRe} from '../strOps'
+import {stringifyArguments, strToRe, returnTrue} from '../util'
 
 const DISPLAYABLE_CHARACTERS_RE = /^[^\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]+$/ // all but 0x00-0x08, 0x0b-0x0c, 0x0e-0x1f, 0x7f-0x9f
 const DISPLAYABLE_ASCII_CHARACTERS_RE = /^[\u0020-\u007E]+$/
@@ -14,15 +13,13 @@ const DISPLAY_DISPLAYABLE_CHARACTERS_RE_SOURCE = `/${DISPLAYABLE_CHARACTERS_RE.s
 const DISPLAY_DISPLAYABLE_ASCII_CHARACTERS_RE_SOURCE = `/${DISPLAYABLE_ASCII_CHARACTERS_RE.source}/`
 const QUOTES_ENDS_RE = /(^")|("$)/g
 
-const returnTrue = _.constant(true)
-
-const toDisplayString = mem(string => (
+const toDisplayString = _.memoize(string => (
   JSON.stringify(string || '')
     .replace(QUOTES_ENDS_RE, '')
     .replace(/[\u007F-\u009F]/g, c => `\\u${_.padStart(c.charCodeAt(0).toString(16), 4, '0')}`)
 ))
 
-const fromDisplayString = mem(string => {
+const fromDisplayString = _.memoize(string => {
   try {
     return JSON.parse(`"${string.replace(/\n/g, '\\n').replace(/\r/g, '\\r')}"`)
   } catch (e) {
@@ -30,40 +27,40 @@ const fromDisplayString = mem(string => {
   }
 })
 
-const arrayFromDisplayString = mem(string => string.split(/\r|\n/).map(fromDisplayString))
+const arrayFromDisplayString = _.memoize(string => string.split(/\r|\n/).map(fromDisplayString))
 
-const parseCharValidator = mem(validatorString => {
+const parseCharValidator = _.memoize(validatorString => {
   if (!validatorString) return returnTrue
 
   // maybe it's a regex
   const validatorRe = _.attempt(strToRe, validatorString)
-  if (_.isRegExp(validatorRe)) return mem(c => c.match(validatorRe))
+  if (_.isRegExp(validatorRe)) return _.memoize(c => c.match(validatorRe))
 
   // otherwise treat as list of allowed chars
   const allowedChars = new Set(fromDisplayString(validatorString) || '')
-  return mem(str => _.every(str, c => allowedChars.has(c)))
+  return _.memoize(str => _.every(str, c => allowedChars.has(c)))
 })
 
-const parseValidator = mem((paramNames, validatorString) => {
+const parseValidator = _.memoize((paramNames, validatorString) => {
   paramNames = [].concat(paramNames) // coerce to Array
   if (validatorString) try {
     let fn = new Function(paramNames, validatorString)
-    return _.merge(mem((...args) => {
+    return _.merge(_.memoize((...args) => {
       try { return fn(...args) }
       catch (e) { console.error(e) }
 
       return false
-    }), {fn})
+    }, stringifyArguments), {fn})
     return validator
   } catch (e) {
     console.error(e)
   }
   return null
-})
+}, stringifyArguments)
 
-const formatNumber = (n, locale='en-US', opts={maximumFractionDigits: 0}) => (
+const formatNumber = _.memoize((n, locale='en-US', opts={maximumFractionDigits: 0}) => (
   n.toLocaleString(locale, opts)
-)
+), stringifyArguments)
 
 const invalidChars = (string, validator) => {
   return _(string)
@@ -571,7 +568,7 @@ return true;
                   <textarea value={displayOutput} readOnly={true} rows="5" className="form-control" />
                 </div>
                 <div id="output-tabs-groups" className={`tab-pane ${key && output ? '' : 'hide'}`}>
-                  <textarea value={`
+                  <textarea value={!key ? '' : `
 ${key}
 
 ${_(output)

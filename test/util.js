@@ -1,10 +1,23 @@
 import test from 'ava'
 import _ from 'lodash'
-import {strGroup, strToRe} from '../src/strOps'
+import {return0, returnTrue, stringifyArguments, group, strGroup, strToRe} from '../src/util'
+
+
+test(`return0() === 0`, t => { t.same(return0(), 0) })
+test(`returnTrue() === true`, t => { t.same(returnTrue(), true) })
+
+test(`stringifyArguments(1, 2, null) === '[1,2,null]'`, t => {
+  t.same(stringifyArguments(1, 2, null), '[1,2,null]')
+})
 
 let mockUngrouped = "Hello, world!"
 let mockGroupSize = 4
 let mockGrouped = ["Hoo!", "e,r", "l l", "lwd"]
+let mockGroupedArrs = mockGrouped.map(g => g.split(''))
+test(`group(${JSON.stringify(mockUngrouped)}, ${mockGroupSize}) === ${JSON.stringify(mockGroupedArrs)}`, t => {
+  t.same(group(mockUngrouped, mockGroupSize), mockGroupedArrs)
+})
+
 test(`strGroup(${JSON.stringify(mockUngrouped)}, ${mockGroupSize}) === ${JSON.stringify(mockGrouped)}`, t => {
   t.same(strGroup(mockUngrouped, mockGroupSize), mockGrouped)
 })

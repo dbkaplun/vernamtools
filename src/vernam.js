@@ -1,18 +1,17 @@
 import _ from 'lodash'
-import mem from 'mem'
 
-import {strGroup} from './strOps'
+import {strGroup, stringifyArguments} from './util'
 
-const vernam = mem((string, key, keyLength=key.length) => {
+const vernam = _.memoize((string, key, keyLength=key.length) => {
   key = _.padEnd(key, keyLength, '\0').slice(0, keyLength)
   return _.reduce(string, (prev, c, i) => (
     prev + String.fromCharCode(c.charCodeAt(0) ^ key.charCodeAt(i % keyLength))
   ), '')
-})
+}, stringifyArguments)
 
 export default vernam
 
-export const knownPlaintext = mem((cipher, keyLength, plains, filter=_.constant(true)) => (
+export const knownPlaintext = _.memoize((cipher, keyLength, plains, filter=_.constant(true)) => (
   plains.reduce((keyTemplates, plain) => {
     let plainLength = plain.length
     let offsetRange = cipher.length - plainLength
@@ -43,17 +42,17 @@ export const knownPlaintext = mem((cipher, keyLength, plains, filter=_.constant(
       return keyTemplates
     }, [])
   }, [new Array(keyLength)])
-))
+), stringifyArguments)
 
 export const fillSparse = (xs, val) => {
   if (typeof val !== 'function') val = _.constant(val)
   return _.reduce(xs, (filled, x, i) => filled + (i in xs ? x : val(i)), '')
 }
 
-export const isCyclic = mem((str, len) => str.length < len || str === _.padEnd('', len, str.slice(0, len)))
+export const isCyclic = _.memoize((str, len) => str.length < len || str === _.padEnd('', len, str.slice(0, len)), stringifyArguments)
 
 // Port of parts of xortool
-export const getKeyLengthFitnesses = mem((text, keyLengthMax) => {
+export const getKeyLengthFitnesses = _.memoize((text, keyLengthMax) => {
   /*
    * Calc. fitnesses for each keylen
    */
@@ -72,7 +71,7 @@ export const getKeyLengthFitnesses = mem((text, keyLengthMax) => {
     ))
     .sortBy(fitnesses, ({fitness}) => -fitness)
     .value()
-})
+}, stringifyArguments)
 
 export const guessDivisors = fitnesses => {
   /*
@@ -94,10 +93,10 @@ export const guessDivisors = fitnesses => {
     .value()
 }
 
-export const countEquals = mem((text, keyLength) => {
+export const countEquals = _.memoize((text, keyLength) => {
   /*
    * count equal chars count for each offset and sum them
    */
   if (keyLength >= text.length) return 0
   return _.sumBy(strGroup(text, keyLength), cs => (_(cs).countBy().values().max() || 0) - 1)
-})
+}, stringifyArguments)
