@@ -2,12 +2,16 @@ import _ from 'lodash'
 
 import {strGroup, stringifyArguments} from './util'
 
-const vernam = _.memoize((string, key, keyLength=key.length) => {
-  key = _.padEnd(key, keyLength, '\0').slice(0, keyLength)
-  return _.reduce(string, (prev, c, i) => (
-    prev + String.fromCharCode(c.charCodeAt(0) ^ key.charCodeAt(i % keyLength))
-  ), '')
-}, stringifyArguments)
+const vernam = (string, key, keyLength=key.length) => {
+  if (keyLength > key.length) key = _.padEnd(key, keyLength, '\0')
+  else if (keyLength < key.length) key = key.slice(0, keyLength)
+
+  let res = ''
+  for (let i = 0; i < string.length; i++) {
+    res += String.fromCharCode(string.charCodeAt(i) ^ key.charCodeAt(i % keyLength))
+  }
+  return res
+}
 
 export default vernam
 

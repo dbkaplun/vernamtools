@@ -1,6 +1,6 @@
 import test from 'ava'
 import _ from 'lodash'
-import {return0, returnTrue, stringifyArguments, group, strGroup, strToRe} from '../src/util'
+import {return0, returnTrue, stringifyArguments, group, strGroup, strToRe, formatNumber} from '../src/util'
 
 
 test(`return0() === 0`, t => { t.same(return0(), 0) })
@@ -33,4 +33,9 @@ test(`strToRe(${JSON.stringify(mockReStr)}) === ${mockReStr}`, t => {
 let mockInvalidReStr = 'this is not a regexp'
 test(`strToRe(${JSON.stringify(mockInvalidReStr)}) throws an error`, t => {
   t.throws(() => { strToRe(mockInvalidReStr) })
+})
+
+let mockNumber = 1234
+test(`formatNumber(${mockNumber}) === '1,234'`, t => {
+  t.is(formatNumber(mockNumber), '1,234')
 })

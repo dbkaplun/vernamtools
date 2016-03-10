@@ -23,3 +23,7 @@ export const strToRe = _.memoize(string => {
   return new RegExp(source, flags)
 })
 strToRe.RE_RE = /^\/(.*)\/(\w*)$/
+
+export const formatNumber = _.memoize((n, locale='en-US', opts={maximumFractionDigits: 0}) => (
+  n.toLocaleString(locale, opts)
+), stringifyArguments)

@@ -2,6 +2,7 @@ import test from 'ava'
 import _ from 'lodash'
 
 import vernam from '../src/vernam'
+import {formatNumber} from '../src/util'
 
 function assertStrLen (str, len) {
   if (str.length !== len) throw new Error(`${str.length} === ${JSON.stringify(str)}.length !== ${len}`)
@@ -55,3 +56,9 @@ test("vernam(input, key).length === input.length", t => {
   t.is(vernam(mockInput, mockKey).length, mockInput.length)
   t.is(vernam(mockKey, mockInput).length, mockKey.length)
 })
+
+let iterations = 100000
+let startTime = Date.now()
+for (let i = 0; i < iterations; i++) vernam(mockInput, i.toString())
+let duration = Date.now() - startTime
+console.log(`vernam(input, key) x ${formatNumber(iterations)}: ${duration}ms`)

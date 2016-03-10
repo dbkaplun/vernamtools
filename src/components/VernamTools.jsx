@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import vernam, {guessDivisors} from '../vernam'
 import VernamBruteForcer from '../VernamBruteForcer'
-import {stringifyArguments, strToRe, returnTrue} from '../util'
+import {stringifyArguments, strToRe, returnTrue, formatNumber} from '../util'
 
 const DISPLAYABLE_CHARACTERS_RE = /^[^\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]+$/ // all but 0x00-0x08, 0x0b-0x0c, 0x0e-0x1f, 0x7f-0x9f
 const DISPLAYABLE_ASCII_CHARACTERS_RE = /^[\u0020-\u007E]+$/
@@ -57,10 +57,6 @@ const parseValidator = _.memoize((paramNames, validatorString) => {
   }
   return null
 }, stringifyArguments)
-
-const formatNumber = _.memoize((n, locale='en-US', opts={maximumFractionDigits: 0}) => (
-  n.toLocaleString(locale, opts)
-), stringifyArguments)
 
 const invalidChars = (string, validator) => {
   return _(string)
