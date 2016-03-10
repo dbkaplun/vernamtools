@@ -193,7 +193,7 @@ return true;
       status: 'STOPPED',
       duration: 0
     })
-    newState.pastValidOutputs = []
+    newState.validOutputs = []
     newState.bruteForceState.vernamBruteForcer = new VernamBruteForcer(_(state)
       .pick(
         'keyLengthMax', 'keyCharValidator',
@@ -280,7 +280,7 @@ return true;
     return this.resetBruteForce(_.merge(newState, {
       displayInput,
       input: fromDisplayString(displayInput),
-      pastValidOutputs: []
+      validOutputs: []
     }))
   },
 
@@ -383,10 +383,12 @@ return true;
     return newState
   },
   addValidOutput (newState) {
-    let {key, output, pastValidOutputs} = this.getState(newState)
-    return _.merge(newState, {
-      pastValidOutputs: [{key, output}, ...pastValidOutputs].slice(0, 50)
-    })
+    let {key, output, validOutputs} = this.getState(newState)
+    return _.find(validOutputs, {key})
+      ? newState
+      : _.merge(newState, {
+          validOutputs: [{key, output}, ...validOutputs].slice(0, 50)
+        })
   },
   validateKey (newState) {
     let {key, keyLength, keyCharValidator, keyValidator} = this.getState(newState)
@@ -432,7 +434,7 @@ return true;
       displayOutputValidator, outputValidator, isOutputValidForValidator,
 
       // brute force
-      bruteForceState, bruteForceBatchSize, pastValidOutputs,
+      bruteForceState, bruteForceBatchSize, validOutputs,
 
       // other
       demoState
@@ -561,7 +563,7 @@ return true;
               <ul id="output-tabs" className="nav nav-tabs" role="tablist">
                 <li className="active"><a href="#output-tabs-output" role="tab" data-toggle="tab">Output</a></li>
                 <li className={key && output ? '' : 'hide'}><a href="#output-tabs-groups" role="tab" data-toggle="tab">Character groups</a></li>
-                <li className={pastValidOutputs.length ? '' : 'hide'}><a href="#output-tabs-past-valid-outputs" role="tab" data-toggle="tab">Past valid outputs</a></li>
+                <li className={validOutputs.length ? '' : 'hide'}><a href="#output-tabs-valid-outputs" role="tab" data-toggle="tab"><b>Valid outputs</b></a></li>
               </ul>
               <div className="tab-content">
                 <div id="output-tabs-output" className="tab-pane active">
@@ -577,7 +579,7 @@ ${_(output)
   .join('\n')}
                   `.trim()} readOnly={true} rows="20" className="form-control" />
                 </div>
-                <div id="output-tabs-past-valid-outputs" className={`tab-pane ${pastValidOutputs ? '' : 'hide'}`}>
+                <div id="output-tabs-valid-outputs" className={`tab-pane ${validOutputs ? '' : 'hide'}`}>
                   <table className="table">
                     <thead>
                       <tr>
@@ -587,7 +589,7 @@ ${_(output)
                       </tr>
                     </thead>
                     <tbody>
-                      {pastValidOutputs.map(({key, output}, i) => {
+                      {validOutputs.map(({key, output}, i) => {
                         let displayKey = toDisplayString(key)
                         let updateKeyOnClick = evtStateHandler((newState, unused, evt) => {
                           evt.preventDefault()
