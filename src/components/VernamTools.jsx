@@ -179,7 +179,17 @@ return true;
   },
 
   getState (newState) {
-    return _.defaults({}, newState, this.state)
+    // return _.defaults({}, newState, this.state)
+    let state = {}
+    let key
+    for (key in newState) {
+      state[key] = newState[key]
+    }
+    for (key in this.state) {
+      if (key in state) continue
+      state[key] = this.state[key]
+    }
+    return state
   },
 
   // Brute force
@@ -342,15 +352,18 @@ return true;
     let {input, key} = this.getState(newState)
     key = key || ''
     input = input || ''
-    let output = vernam(input, key)
-    let outputPrefix = output.slice(0, key.length)
-    return this.validateOutput(_.merge({
-      outputPrefix,
-      displayOutputPrefix: toDisplayString(outputPrefix)
-    }, newState, {
-      output,
-      displayOutput: toDisplayString(output)
-    }), fromBruteForce)
+    newState.output = vernam(input, key)
+
+    if (!fromBruteForce) {
+      let outputPrefix = newState.output.slice(0, key.length)
+      newState = _.merge({
+        outputPrefix,
+        displayOutputPrefix: toDisplayString(outputPrefix)
+      }, newState)
+      newState.displayOutput = toDisplayString(newState.output)
+    }
+
+    return this.validateOutput(newState, fromBruteForce)
   },
 
   // validations
@@ -363,22 +376,19 @@ return true;
     })
   },
   validateOutput (newState, fromBruteForce=false) {
-    let {key, output, outputPrefix, knownPlaintexts, outputCharValidator, outputValidator} = this.getState(newState)
-    let isDisplayOutputValid = output !== null
+    let {output, knownPlaintexts, outputCharValidator, outputValidator} = this.getState(newState)
+    newState.isDisplayOutputValid = output !== null
     output = output || ''
-    let isOutputCharsValid = fromBruteForce || !outputCharValidator || _.every(output, outputCharValidator)
-    let isOutputValidForValidator = !outputValidator || outputValidator(output)
-    let missingPlaintexts = (fromBruteForce && knownPlaintexts || []).filter(plain => plain !== null && output.indexOf(plain) === -1)
-    let isOutputValid = isDisplayOutputValid && isOutputCharsValid && isOutputValidForValidator && !missingPlaintexts.length
+    newState.isOutputCharsValid = fromBruteForce || !outputCharValidator || _.every(output, outputCharValidator)
+    newState.isOutputValidForValidator = !outputValidator || outputValidator(output)
+    newState.missingPlaintexts = (fromBruteForce && knownPlaintexts || []).filter(plain => plain !== null && output.indexOf(plain) === -1)
+    newState.isOutputValid =
+      newState.isDisplayOutputValid &&
+      newState.isOutputCharsValid &&
+      newState.isOutputValidForValidator &&
+      !newState.missingPlaintexts.length
 
-    newState = _.merge(newState, {
-      isDisplayOutputValid,
-      isOutputCharsValid,
-      isOutputValidForValidator,
-      missingPlaintexts,
-      isOutputValid
-    })
-    if (output && isOutputValid) newState = this.addValidOutput(newState)
+    if (output && newState.isOutputValid) newState = this.addValidOutput(newState)
 
     return newState
   },
