@@ -85,7 +85,7 @@ export default React.createClass({
 
       bruteForceBatchSize: 50,
       bruteForceState: {},
-      bruteForceUpdateThrottle: 200,
+      bruteForceUpdateThrottle: 100,
 
       demoState: {
         displayInput: toDisplayString([
@@ -233,11 +233,8 @@ return true;
       let newState = {}
       // newState = this.updateKey(newState, key)
       newState = this._updateKeyFromBruteForceGuess(newState, key)
-      this.setState(newState, () => {
-        process.nextTick(resolve)
-      })
+      this.setState(newState, () => { setImmediate(resolve) })
     })
-      // .delay() // unblocks event loop
       .then(() => this.guessWhile(iteratee))
   }),
   _updateKeyFromBruteForceGuess (newState, key) {
