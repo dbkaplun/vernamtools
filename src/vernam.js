@@ -2,15 +2,11 @@ import _ from 'lodash'
 
 import {strGroup, stringifyArguments} from './util'
 
-const vernam = (string, key, keyLength=key.length) => {
-  if (keyLength > key.length) key = _.padEnd(key, keyLength, '\0')
-  else if (keyLength < key.length) key = key.slice(0, keyLength)
-
-  let res = ''
-  for (let i = 0; i < string.length; i++) {
-    res += String.fromCharCode(string.charCodeAt(i) ^ key.charCodeAt(i % keyLength))
-  }
-  return res
+const vernam = (input, key, keyLength=key.length) => {
+  let output = new Buffer(input)
+  key = new Buffer(key)
+  for (let i = 0; i < output.length; i++) output[i] ^= key[i % keyLength] // if key's index is greater than its length, x ^ undefined = x
+  return output.toString()
 }
 
 export default vernam
